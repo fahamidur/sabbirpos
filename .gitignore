@@ -1,0 +1,10 @@
+env
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*/__pycache__/
+admin_credentials.json
+create_admin.py
+credential.json
+db.sqlite3
