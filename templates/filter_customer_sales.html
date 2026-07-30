@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Report - Rahmaniya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'nav.css' %}">
+  <style>
+    :root {
+      --dash-bg: #f0f2f6;
+      --card-bg: #ffffff;
+      --sidebar-bg: #1a1d29;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --muted: #64748b;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; display: flex; background: var(--dash-bg); min-height: 100vh; color: var(--text); }
+    .sidebar { background: var(--sidebar-bg); color: white; width: 260px; height: 100vh; position: fixed; top: 0; left: 0; padding-top: 24px; display: flex; flex-direction: column; gap: 2px; transition: 0.3s; z-index: 100; box-shadow: var(--shadow); overflow-y: auto; }
+    .sidebar a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 12px 24px; display: block; transition: all 0.2s; border-left: 3px solid transparent; font-size: 0.9rem; font-weight: 500; }
+    .sidebar a:hover { background: rgba(255,255,255,0.08); border-left-color: var(--primary); color: white; }
+    .burger { display: none; font-size: 22px; cursor: pointer; color: white; padding: 12px 14px; position: fixed; top: 12px; left: 12px; z-index: 101; background: var(--sidebar-bg); border-radius: var(--radius-sm); }
+    .main-content { margin-left: 260px; padding: 28px 32px 40px; flex-grow: 1; min-width: 0; transition: margin-left 0.3s; }
+    .dash-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+    .dash-title { font-size: 1.75rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+    .dash-title span { color: var(--primary); }
+    .user-badge { font-size: 0.875rem; color: var(--muted); font-weight: 500; }
+    .filter-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); display: inline-flex; flex-wrap: wrap; align-items: flex-end; gap: 20px; margin-bottom: 28px; }
+    .filter-card label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .filter-card select { padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: inherit; min-width: 160px; background: var(--card-bg); color: var(--text); }
+    .filter-card select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .btn-filter { padding: 10px 22px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-filter:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .balance-bar { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 24px; padding: 16px 20px; background: var(--card-bg); border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+    .balance-bar strong { color: var(--muted); font-size: 0.85rem; }
+    .balance-bar span { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+    .section-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 28px; }
+    .section-card-header { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 1.1rem; font-weight: 700; color: var(--text); }
+    .table-wrap { overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    .data-table th, .data-table td { padding: 14px 20px; text-align: left; font-size: 0.875rem; }
+    .data-table th { background: var(--dash-bg); color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+    .data-table td { border-bottom: 1px solid var(--border); color: var(--text); }
+    .data-table tbody tr:hover { background: rgba(37, 99, 235, 0.03); }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table .num { font-variant-numeric: tabular-nums; font-weight: 500; }
+    .balance-due { color: #dc2626; font-weight: 600; }
+    .balance-advance { color: #16a34a; font-weight: 600; }
+    .products-cell { max-width: 280px; word-wrap: break-word; font-size: 0.85rem; line-height: 1.4; }
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); font-size: 0.95rem; }
+    @media (max-width: 900px) { .main-content { margin-left: 0; margin-top: 56px; padding: 20px; } .sidebar { width: 72px; } .sidebar a { padding: 14px 8px; text-align: center; font-size: 0; } }
+    @media (max-width: 600px) { .sidebar { width: 0; overflow: hidden; } .sidebar.open { width: 260px; } .sidebar.open a { font-size: 0.9rem; padding: 12px 24px; } .burger { display: block; } .main-content { margin-left: 0; padding: 16px; } .filter-card { width: 100%; } }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <div class="main-content">
+    <div class="dash-header">
+      <h1 class="dash-title">Customer <span>Report</span></h1>
+      <span class="user-badge">User: Admin</span>
+    </div>
+
+    <form method="post" action="{% url 'filter_customer_sales' %}">
+      {% csrf_token %}
+      <div class="filter-card">
+        <div>
+          <label for="customer">Customer</label>
+          <select id="customer" name="customer" required>
+            <option value="">Select Customer</option>
+            {% for customer in customers %}
+            <option value="{{ customer.id }}">{{ customer.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="month">Month</label>
+          <select id="month" name="month" required>
+            <option value="">Select Month</option>
+            {% for month in months %}
+            <option value="{{ month.number }}" {% if month.number == selected_month %}selected{% endif %}>{{ month.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="year">Year</label>
+          <select id="year" name="year" required>
+            <option value="">Select Year</option>
+            {% for year in years %}
+            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn-filter">Apply</button>
+      </div>
+    </form>
+
+    {% if filtered_sales %}
+    <div class="balance-bar">
+      <div><strong>Balance:</strong> <span>{{ customer_balance }}</span></div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-header">Sales — {{ customer_name }} ({{ selected_month }}/{{ selected_year }})</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Invoice</th>
+              <th>Products</th>
+              <th>Salesman</th>
+              <th>Total</th>
+              <th>Discount</th>
+              <th>Less</th>
+              <th>Net Sale</th>
+              <th>Received</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sale in filtered_sales %}
+            <tr>
+              <td>{{ sale.date }}</td>
+              <td>{{ sale.invoice_number }}</td>
+              <td class="products-cell">
+                {% if sale.products %}
+                {% for p in sale.products %}{% firstof p.product p.name "Item" %} x{{ p.quantity|default:0 }}{% if not forloop.last %}; {% endif %}{% endfor %}
+                {% else %}—{% endif %}
+              </td>
+              <td>{{ sale.salesman }}</td>
+              <td class="num">{{ sale.total_price|floatformat:0 }}</td>
+              <td class="num">{{ sale.discount|floatformat:0 }}</td>
+              <td class="num">{{ sale.less|floatformat:0 }}</td>
+              <td class="num">{{ sale.net_sale|floatformat:0 }}</td>
+              <td class="num">{{ sale.payment_received|floatformat:0 }}</td>
+              <td class="num">
+                {% if sale.balance_due and sale.balance_due > 0 %}
+                  <span class="balance-due">{{ sale.balance_due|floatformat:0 }}</span>
+                {% elif sale.balance_advance and sale.balance_advance > 0 %}
+                  <span class="balance-advance">{{ sale.balance_advance|floatformat:0 }}</span>
+                {% else %}
+                  0
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="section-card">
+      <div class="section-card-header">Sales</div>
+      <div class="empty-state">Select a customer, month and year, then click Apply to view sales.</div>
+    </div>
+    {% endif %}
+  </div>
+  <script>function toggleNav(){ document.getElementById('sidebar').classList.toggle('open'); }</script>
+</body>
+</html>

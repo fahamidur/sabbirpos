@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factory POS Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      background-color: var(--light-bg);
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+    button, .btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    button:hover, .btn:hover {
+      background-color: #218838;
+    }
+    header {
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .transaction-section {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .transaction-section h2 {
+      margin-bottom: 15px;
+    }
+    .additional-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .additional-info .input-group {
+      flex: 1 1 200px;
+      min-width: 200px;
+    }
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    .delete-btn {
+      background-color: #e63946;
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+      .sidebar a span {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+      .burger {
+        display: block;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+       .additional-info {
+      flex-direction: column;
+      gap: 4px;           /* Reduce gap */
+      margin-bottom: 1px; /* Reduce margin */
+    }
+    .input-group {
+      margin-bottom: 0;   /* Remove extra margin between selects */
+    }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      header h1 {
+        margin-bottom: 10px;
+      }
+      table {
+        font-size: 14px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      th, td {
+        padding: 6px;
+      }
+    }
+
+    /* Form and Input Styles */
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      flex: 1 1 300px;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: var(--secondary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Table Styles */
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-top: 30px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background-color: rgba(52, 152, 219, 0.05);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 12px 25px;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow);
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .input-group {
+        flex: 1 1 100%;
+      }
+
+      .table-container {
+        margin-top: 20px;
+        border-radius: 6px;
+      }
+
+      table {
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        padding: 12px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .input-group input,
+      .input-group select {
+        padding: 10px;
+        font-size: 0.95rem;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <div class="main-content">
+    <header>
+      <h1>Entry</h1>
+      <div>User: Admin</div>
+    </header>
+
+    <!-- Filter Form -->
+    <form method="post" action="{% url 'filter_adai' %}">
+        {% csrf_token %}
+        <div class="additional-info">
+        <div class="input-group">
+            <label for="salesman">Select Customer:</label>
+            <select id="customer" name="customer" required>
+                <option value="">--Select Customer--</option>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="month">Select Month:</label>
+            <select id="month" name="month" required>
+                <option value="">--Select Month--</option>
+                {% for month in months %}
+                    <option value="{{ month.number }}" {% if month.number == selected_month %}selected{% endif %}>
+                        {{ month.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="year">Select Year:</label>
+            <select id="year" name="year" required>
+                <option value="">--Select Year--</option>
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        </div>
+        <button type="submit" class="btn">Filter</button>
+    </form>
+
+    <!-- Filtered Adai Table -->
+    {% if filtered_adai %}
+    <h2>Adai Records for {{ customer_name }} ({{ selected_month }}/{{ selected_year }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Salesman</th>
+                <th>Due</th>
+                <th>Advance</th>
+                <th>Sales Comission</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adai in filtered_adai %}
+            <tr>
+                <td>{{ adai.date }}</td>
+                <td>{{ adai.salesman }}</td>
+                <td>{{ adai.due }}</td>
+                <td>{{ adai.advance }}</td>
+                <td>{{ adai.sales_comission }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No adai data available for the selected filters.</p>
+    {% endif %}
+  </div>
+  <script>
+    function toggleNav() {
+      var sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      } else {
+        sidebar.classList.add('open');
+      }
+    }
+  </script>
+</body>
+</html>

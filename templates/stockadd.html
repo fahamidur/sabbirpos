@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Sales - Factory POS Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      background-color: var(--light-bg);
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+    header {
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Form Elements */
+    .form-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .input-group {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .input-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    input[type="date"],
+    select,
+    input[type="number"] {
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="date"]:focus,
+    select:focus,
+    input[type="number"]:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 0.8rem 1.5rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .action-btn {
+      margin: 0;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <!-- <div class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'salesman_list' %}">Salesman</a>
+    <a href="{% url 'pos_dashboard' %}">POS</a>
+    <a href="{% url 'customer_list' %}">Customer</a>
+    <a href="{% url 'product_list' %}">Product</a>
+    <a href="{% url 'all_sales' %}">All Sales</a>
+    <a href="{% url 'stockaddjust' %}">Add Stock</a>
+    <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+    <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+    <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+    <a href="{% url 'expence_list' %}">Expense Create</a>
+    <a href="{% url 'filter_sales' %}">Salesman Report</a>
+    <a href="{% url 'filter_adai' %}">Adai Report</a>
+    <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+    <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+    <a href="{% url 'add_expence' %}">Add Expense</a>
+    <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+  </div> -->
+  <form action="">
+    {% csrf_token %}
+    <div class="main-content">
+      <div class="form-row">
+        <div class="input-group">
+          <label for="Date">Date:</label>
+          <input type="date" id="Date" name="Date">
+        </div>
+        
+        <div class="input-group">
+          <label for="productSelect">Product List</label>
+          <select id="productSelect">
+              <option value="">--Select Product--</option>
+              {% for product in products %}
+                <option value="{{ product.id }}" data-price="{{ product.rate }}">
+                  {{ product.full_name }} - ${{ product.rate }}
+                </option>
+              {% endfor %}
+            </select>
+        </div>
+    
+        <div class="input-group">
+          <label for="quantityInput">Qty:</label>
+          <input type="number" id="quantityInput" min="1" value="1">
+        </div>
+    
+        <div class="input-group">
+          
+        </div>
+      </div>
+      <button class="btn" onclick="addToStock()">Add to Stock</button>
+    </div>
+  </form>
+
+  <!-- JavaScript for Sidebar Toggle -->
+  <script>
+    function toggleNav() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+    }
+    
+
+  // Initialize DOM references properly
+  let productSelect, quantityInput, csrfToken;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Cache DOM elements after page loads
+    productSelect = document.getElementById('productSelect');
+    quantityInput = document.getElementById('quantityInput');
+    csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+  });
+
+  function addToStock() {
+    // Validate elements exist
+    if (!productSelect || !quantityInput || !csrfToken) {
+      console.error('Required elements not found!');
+      return;
+    }
+
+    // Validate selection
+    if (!productSelect.value) {
+      alert('Please select a product');
+      return;
+    }
+    
+    const quantity = parseInt(quantityInput.value);
+    if (isNaN(quantity) || quantity <= 0) {
+      alert('Please enter a valid quantity');
+      return;
+    }
+
+    // Send to backend
+    fetch('{% url "update_stock" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken.value
+      },
+      body: JSON.stringify({
+        product_id: productSelect.value,
+        quantity: quantity
+      })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success') {
+        alert(`Successfully added ${quantity} items to stock!`);
+        // Optionally refresh product list
+        productSelect.value = '';
+        quantityInput.value = 1;
+      } else {
+        throw new Error(data.error || 'Unknown error occurred');
+      }
+    })
+    .catch(error => {
+      alert(`Error: ${error.message}`);
+      console.error('Error:', error);
+    });
+  }
+  </script>
+</body>
+</html>

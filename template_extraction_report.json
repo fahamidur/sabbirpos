@@ -1,0 +1,86 @@
+[
+  {
+    "template": "bankinfo.html",
+    "css_blocks": 1,
+    "js_blocks": 1,
+    "before_lines": 694,
+    "after_lines": 308
+  },
+  {
+    "template": "addsales.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 565,
+    "after_lines": 274
+  },
+  {
+    "template": "Sales.html",
+    "css_blocks": 1,
+    "js_blocks": 1,
+    "before_lines": 559,
+    "after_lines": 125
+  },
+  {
+    "template": "cart.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 495,
+    "after_lines": 266
+  },
+  {
+    "template": "homepage.html",
+    "css_blocks": 1,
+    "js_blocks": 1,
+    "before_lines": 921,
+    "after_lines": 188
+  },
+  {
+    "template": "product_detail.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 618,
+    "after_lines": 294
+  },
+  {
+    "template": "Report.html",
+    "css_blocks": 1,
+    "js_blocks": 1,
+    "before_lines": 499,
+    "after_lines": 187
+  },
+  {
+    "template": "salesman_pos.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 461,
+    "after_lines": 295
+  },
+  {
+    "template": "checkout.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 461,
+    "after_lines": 296
+  },
+  {
+    "template": "Customer.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 545,
+    "after_lines": 231
+  },
+  {
+    "template": "add_expence.html",
+    "css_blocks": 1,
+    "js_blocks": 0,
+    "before_lines": 453,
+    "after_lines": 257
+  },
+  {
+    "template": "index.html",
+    "css_blocks": 1,
+    "js_blocks": 1,
+    "before_lines": 2159,
+    "after_lines": 764
+  }
+]

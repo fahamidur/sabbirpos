@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Product Sales Report</h2>
+    
+    <!-- Filter Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <label for="product" class="form-label">Select Product</label>
+                    <select name="product" id="product" class="form-select" required>
+                        <option value="">Choose Product...</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}" {% if selected_product.id == product.id %}selected{% endif %}>
+                                {{ product.name }} ({{ product.code }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="month" class="form-label">Month</label>
+                    <select name="month" id="month" class="form-select" required>
+                        <option value="">Select Month...</option>
+                        {% for month in months %}
+                            <option value="{{ month.number }}" {% if selected_month == month.number %}selected{% endif %}>
+                                {{ month.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="year" class="form-label">Year</label>
+                    <select name="year" id="year" class="form-select" required>
+                        <option value="">Select Year...</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Generate Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Results -->
+    {% if selected_product %}
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">
+                Sales Report for {{ selected_product.name }} ({{ selected_product.code }})
+                {% if selected_month and selected_year %}
+                - {{ selected_month|get_month_name }} {{ selected_year }}
+                {% endif %}
+            </h4>
+            
+            <!-- Summary -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Quantity Sold</h5>
+                            <h3 class="text-primary">{{ total_quantity }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sales Amount</h5>
+                            <h3 class="text-primary">৳{{ total_amount|floatformat:2 }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Sales Table -->
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Invoice</th>
+                            <th>Customer</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in product_sales %}
+                        <tr>
+                            <td>{{ sale.date }}</td>
+                            <td>{{ sale.invoice }}</td>
+                            <td>{{ sale.customer }}</td>
+                            <td>{{ sale.quantity }}</td>
+                            <td>৳{{ sale.price|floatformat:2 }}</td>
+                            <td>৳{{ sale.total|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No sales found for this period</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

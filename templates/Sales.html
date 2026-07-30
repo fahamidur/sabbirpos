@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Point of Sale - Rahmaniya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'nav.css' %}">
+  {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/sales.css' %}">
+</head>
+<body>
+  {% include 'nav.html' %}
+
+  <div class="main-content">
+    <div class="dash-header">
+      <h1 class="dash-title">Point of <span>Sale</span></h1>
+      <span class="user-badge">User: Admin</span>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-header">New Sale</div>
+      <div class="section-card-body">
+        <div class="input-row">
+          <div class="input-group">
+            <label for="warehouse">Warehouse</label>
+            <input type="text" id="warehouse" value="Rahmaniya Pump" readonly>
+          </div>
+          <div class="input-group">
+            <label for="salesmanSelect">Salesman</label>
+            <select id="salesmanSelect" onchange="onSalesmanChange()">
+              <option value="">Select Salesman</option>
+              {% for sm in salesman %}
+              <option value="{{ sm.id }}"{% if sm.id|stringformat:'s' == request.GET.salesman %} selected{% endif %}>{{ sm.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="saleDateInput">Sale Date</label>
+            <input type="date" id="saleDateInput" title="Leave empty for today">
+          </div>
+          <div class="input-group">
+            <label for="customerSelect">Customer</label>
+            <select id="customerSelect" onchange="showCustomerInfo()">
+              <option value="">Select Customer</option>
+              {% for cust in customers %}
+              <option value="{{ cust.id }}" data-due="{{ cust.due }}" data-advance="{{ cust.Advance }}">{{ cust.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div id="customerInfo" class="customer-due-advance"></div>
+
+        <div class="add-product-row">
+          <div class="input-group">
+            <label for="productSelect">Product</label>
+            <select id="productSelect">
+              <option value="">Select Product</option>
+              {% for product in products %}
+              <option data-id="{{ product.id }}" data-price="{{ product.rate }}">{{ product.name }} - Tk{{ product.rate }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="quantityInput">Qty</label>
+            <input type="number" id="quantityInput" min="0.001" step="any" value="1">
+          </div>
+          <div class="input-group">
+            <label for="lessInput">Less per unit</label>
+            <input type="number" id="lessInput" min="0" step="any" value="0" oninput="onPerProductLessChange()">
+          </div>
+          <button type="button" class="btn-add" onclick="addToCart()">Add to Cart</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="pos-table" id="cartTable">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Less</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="cartTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="grand-total">
+          Grand Total: Tk <span id="grandTotal">0</span>
+        </div>
+
+        <div class="payment-row">
+          <div class="input-group">
+            <label for="discountInput">Discount %</label>
+            <input type="number" id="discountInput" min="0" value="0" oninput="calculateDue()">
+          </div>
+          <div class="input-group">
+            <label for="lessAmountInput">Less Amount</label>
+            <input type="number" id="lessAmountInput" min="0" value="0" oninput="onLessAmountChange()">
+          </div>
+          <div class="input-group">
+            <label for="paymentInput">Payment</label>
+            <input type="number" id="paymentInput" min="0" value="0" oninput="calculateDue()">
+          </div>
+          <div class="due-display">
+            Due: Tk <span id="dueAmount">0.00</span>
+          </div>
+        </div>
+
+        <div class="actions-right">
+          <button type="button" class="btn-complete" onclick="completeSale()">Complete Sale</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/pages/sales.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer - Rahmaniya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'nav.css' %}">
+  {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/customer.css' %}">
+</head>
+<body>
+  {% include 'nav.html' %}
+
+  <div class="main-content">
+    <div class="dash-header">
+      <h1 class="dash-title">Customer <span>Management</span></h1>
+      <div class="header-actions">
+        <a href="{% url 'export_customers_excel' %}" class="btn-excel">Export to Excel</a>
+        <form method="post" action="{% url 'upload_customers' %}" enctype="multipart/form-data" class="import-form">
+          {% csrf_token %}
+          <input type="file" name="excel_file" accept=".xlsx,.xls" required>
+          <button type="submit" class="btn-import">Import from Excel</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Add New Customer</h3>
+      <form method="post" action="{% url 'customer_list' %}">
+        {% csrf_token %}
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Customer name">
+          </div>
+          <div class="input-group">
+            <label for="code">Code</label>
+            <input type="text" id="code" name="code" placeholder="Code">
+          </div>
+          <div class="input-group">
+            <label for="area">Area</label>
+            <input type="text" id="area" name="area" placeholder="Area">
+          </div>
+          <div class="input-group">
+            <label for="phone">Phone</label>
+            <input type="number" id="phone" name="phone" placeholder="Phone">
+          </div>
+          <div class="input-group">
+            <label for="nid">NID</label>
+            <input type="text" id="nid" name="nid" placeholder="NID">
+          </div>
+          <div class="input-group">
+            <label for="due">Initial Due</label>
+            <input type="number" id="due" name="due" placeholder="0" step="0.01" value="0">
+          </div>
+          <div class="input-group">
+            <label for="advance">Initial Advance</label>
+            <input type="number" id="advance" name="Advance" placeholder="0" step="0.01" value="0">
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">Add Customer</button>
+      </form>
+    </div>
+
+    <div class="section-card">
+      <div class="section-card-header">Customers</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Area</th>
+              <th>Phone</th>
+              <th>Total Buy</th>
+              <th>Current Month</th>
+              <th>Paid</th>
+              <th>Advanced</th>
+              <th>Due</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customer %}
+            <tr id="customer-row-{{ customer.id }}">
+              <td class="customer-name"><strong>{{ customer.name }}</strong></td>
+              <td class="customer-code">{{ customer.code }}</td>
+              <td class="customer-area">{{ customer.area }}</td>
+              <td class="customer-phone">{{ customer.phone }}</td>
+              <td class="num">{{ customer.total_buy|floatformat:0 }}</td>
+              <td class="num">{{ customer.current_month_buy|floatformat:0 }}</td>
+              <td class="num customer-paid">{{ customer.Paid|floatformat:0 }}</td>
+              <td class="num customer-advance">{{ customer.Advance|floatformat:0 }}</td>
+              <td class="num customer-due">{{ customer.due|floatformat:0 }}</td>
+              <td class="cell-actions">
+                <form method="post" action="{% url 'delete_customer' customer.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" onclick="return confirm('Are you sure you want to delete this customer?');" class="btn-action btn-delete">Delete</button>
+                </form>
+                <button type="button" class="btn-action btn-edit edit-btn" data-customer='{{ customer.json|safe }}' data-id="{{ customer.id }}">Edit</button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="10" class="empty-state">No customers yet. Add one above.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="editCustomerModal" class="modal-overlay">
+      <div class="modal-box">
+        <button type="button" class="modal-close" id="closeModal" aria-label="Close">&times;</button>
+        <h3>Edit Customer</h3>
+        <form id="editCustomerForm">
+          <input type="hidden" id="edit-id" name="id">
+          <div class="input-group">
+            <label>Name</label>
+            <input type="text" id="edit-name" name="name" required>
+          </div>
+          <div class="input-group">
+            <label>Code</label>
+            <input type="text" id="edit-code" name="code" required>
+          </div>
+          <div class="input-group">
+            <label>Area</label>
+            <input type="text" id="edit-area" name="area" required>
+          </div>
+          <div class="input-group">
+            <label>Phone</label>
+            <input type="text" id="edit-phone" name="phone" required>
+          </div>
+          <div class="input-group">
+            <label>NID</label>
+            <input type="text" id="edit-nid" name="nid" required>
+          </div>
+          <div class="input-group">
+            <label>Initial Due</label>
+            <input type="number" id="edit-due" name="due" step="0.01" required>
+          </div>
+          <div class="input-group">
+            <label>Initial Advance</label>
+            <input type="number" id="edit-advance" name="Advance" step="0.01" required>
+          </div>
+          <div class="input-group">
+            <label>Paid</label>
+            <input type="number" id="edit-paid" name="Paid" step="0.01" required>
+          </div>
+          <button type="submit" class="btn-submit">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var modal = document.getElementById('editCustomerModal');
+      var closeBtn = document.getElementById('closeModal');
+
+      closeBtn.onclick = function() { modal.classList.remove('show'); };
+      modal.onclick = function(e) {
+        if (e.target === modal) modal.classList.remove('show');
+      };
+
+      document.querySelectorAll('.edit-btn').forEach(function(btn) {
+        btn.onclick = function() {
+          var customer = JSON.parse(this.getAttribute('data-customer'));
+          document.getElementById('edit-id').value = customer.id;
+          document.getElementById('edit-name').value = customer.name;
+          document.getElementById('edit-code').value = customer.code;
+          document.getElementById('edit-area').value = customer.area;
+          document.getElementById('edit-phone').value = customer.phone;
+          document.getElementById('edit-nid').value = customer.nid;
+          document.getElementById('edit-due').value = customer.initial_due != null ? customer.initial_due : customer.due;
+          document.getElementById('edit-advance').value = customer.initial_advance != null ? customer.initial_advance : customer.Advance;
+          document.getElementById('edit-paid').value = customer.Paid;
+          modal.classList.add('show');
+        };
+      });
+
+      document.getElementById('editCustomerForm').onsubmit = function(e) {
+        e.preventDefault();
+        var id = document.getElementById('edit-id').value;
+        var data = {
+          name: document.getElementById('edit-name').value,
+          code: document.getElementById('edit-code').value,
+          area: document.getElementById('edit-area').value,
+          phone: document.getElementById('edit-phone').value,
+          nid: document.getElementById('edit-nid').value,
+          due: document.getElementById('edit-due').value,
+          Advance: document.getElementById('edit-advance').value,
+          Paid: document.getElementById('edit-paid').value
+        };
+        fetch('/update_customer/' + id + '/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify(data)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(resp) {
+          if (resp.status === 'success') {
+            var row = document.getElementById('customer-row-' + id);
+            if (row) {
+              row.querySelector('.customer-name').innerHTML = '<strong>' + data.name + '</strong>';
+              row.querySelector('.customer-code').textContent = data.code;
+              row.querySelector('.customer-area').textContent = data.area;
+              row.querySelector('.customer-phone').textContent = data.phone;
+              row.querySelector('.customer-due').textContent = resp.due != null ? Math.round(resp.due) : data.due;
+              row.querySelector('.customer-advance').textContent = resp.Advance != null ? Math.round(resp.Advance) : data.Advance;
+              row.querySelector('.customer-paid').textContent = resp.Paid != null ? Math.round(resp.Paid) : data.Paid;
+            }
+            modal.classList.remove('show');
+          } else {
+            alert('Update failed: ' + (resp.error || resp.message || 'Unknown error'));
+          }
+        })
+        .catch(function(err) { alert('Error: ' + err); });
+      };
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Ecommerce Store</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/cart.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'homepage' %}"><i class="fas fa-shopping-bag me-2"></i>Ecommerce Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}#products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'cart' %}">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            <span class="badge bg-danger" id="cartBadge" style="display: none;">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h2><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div id="cartItems">
+                    <!-- Cart items will be loaded here -->
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="cart-summary">
+                    <h4 class="mb-4">Order Summary</h4>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span id="shipping">$0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount:</span>
+                        <span id="discount">$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                    <button class="btn btn-checkout" onclick="proceedToCheckout()">
+                        <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                    </button>
+                    <a href="{% url 'homepage' %}#products" class="btn btn-continue-shopping">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let cart = [];
+        let productData = {};
+        
+        // Load product data from server
+        async function loadProductData() {
+            try {
+                const response = await fetch('/api/products/');
+                if (response.ok) {
+                    const products = await response.json();
+                    products.forEach(product => {
+                        productData[product.id] = product;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading product data:', error);
+            }
+        }
+        
+        function getCart() {
+            const cartStr = localStorage.getItem('ecommerce_cart');
+            return cartStr ? JSON.parse(cartStr) : [];
+        }
+        
+        function saveCart(cart) {
+            localStorage.setItem('ecommerce_cart', JSON.stringify(cart));
+            updateCartBadge();
+            renderCart();
+        }
+        
+        function updateCartBadge() {
+            const cart = getCart();
+            const badge = document.getElementById('cartBadge');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function updateQuantity(productId, change) {
+            cart = getCart();
+            const item = cart.find(item => item.id == productId);
+            if (item) {
+                const newQuantity = item.quantity + change;
+                if (newQuantity > 0) {
+                    // Check stock if available
+                    if (productData[productId] && newQuantity > productData[productId].stock) {
+                        alert(`Only ${productData[productId].stock} units available in stock!`);
+                        return;
+                    }
+                    item.quantity = newQuantity;
+                    saveCart(cart);
+                } else {
+                    removeFromCart(productId);
+                }
+            }
+        }
+        
+        function setQuantity(productId, quantity) {
+            cart = getCart();
+            const item = cart.find(item => item.id == productId);
+            if (item) {
+                const qty = parseInt(quantity) || 1;
+                if (qty > 0) {
+                    if (productData[productId] && qty > productData[productId].stock) {
+                        alert(`Only ${productData[productId].stock} units available in stock!`);
+                        item.quantity = productData[productId].stock;
+                    } else {
+                        item.quantity = qty;
+                    }
+                    saveCart(cart);
+                }
+            }
+        }
+        
+        function removeFromCart(productId) {
+            if (confirm('Are you sure you want to remove this item from cart?')) {
+                cart = getCart();
+                cart = cart.filter(item => item.id != productId);
+                saveCart(cart);
+            }
+        }
+        
+        function renderCart() {
+            cart = getCart();
+            const cartItemsDiv = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Looks like you haven't added any items to your cart yet.</p>
+                        <a href="{% url 'homepage' %}#products" class="btn btn-continue-shopping">
+                            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                `;
+                updateSummary();
+                return;
+            }
+            
+            let html = '';
+            cart.forEach(item => {
+                const product = productData[item.id] || {};
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.name}</div>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
+                            ${product.stock !== undefined ? `<div style="font-size: 0.9rem; color: #666;">Stock: ${product.stock}</div>` : ''}
+                        </div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantity-input" value="${item.quantity}" 
+                                   min="1" max="${product.stock || 999}" 
+                                   onchange="setQuantity(${item.id}, this.value)">
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="cart-item-total">
+                            $${itemTotal}
+                        </div>
+                        <button class="remove-btn" onclick="removeFromCart(${item.id})">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </div>
+                `;
+            });
+            
+            cartItemsDiv.innerHTML = html;
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            cart = getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal > 50 ? 0 : 10; // Free shipping over $50
+            const discount = 0; // Can add discount logic here
+            const total = subtotal + shipping - discount;
+            
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
+            document.getElementById('discount').textContent = `$${discount.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        function proceedToCheckout() {
+            cart = getCart();
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = "{% url 'checkout' %}";
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadProductData();
+            renderCart();
+            updateCartBadge();
+        });
+    </script>
+</body>
+</html>

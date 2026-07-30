@@ -1,0 +1,166 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background-color: #333;
+            color: white;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: width 0.3s;
+            overflow-x: hidden;
+            z-index: 100;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+        }
+        .sidebar a:hover { background-color: #575757; }
+        .burger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: white;
+            padding: 10px 20px;
+            background: #333;
+            border-radius: 4px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 101;
+        }
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+            flex-grow: 1;
+            width: 100%;
+            transition: margin-left 0.3s;
+        }
+        header {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pos-section {
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .pos-section h2 { margin-bottom: 15px; }
+        .additional-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .additional-info .input-group {
+            flex: 1 1 200px;
+            min-width: 200px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .pos-form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        .pos-form label {
+            font-weight: bold;
+        }
+        .pos-form select,
+        .pos-form input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover { background-color: #218838; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td { border: 1px solid #ddd; }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            font-size: 1rem;
+        }
+        th { background-color: #f4f4f4; }
+        .remove-btn { background-color: #e63946; }
+        .payment-info {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        .payment-info label { font-weight: bold; margin-right: 10px; }
+        .payment-info input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+        }
+        @media (max-width: 600px) {
+            .sidebar { width: 0; }
+            .burger { display: block; }
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+                width: 100vw;
+            }
+            .additional-info { flex-direction: column; gap: 10px; }
+            header { flex-direction: column; align-items: flex-start; }
+            header h1 { margin-bottom: 10px; }
+            .pos-form { flex-direction: column; align-items: stretch; }
+            .pos-form label,
+            .pos-form select,
+            .pos-form input,
+            .btn { margin-bottom: 10px; }
+            .payment-info { align-items: stretch; }
+            .payment-info input { width: 100%; }
+            table {
+                font-size: 14px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            th, td { padding: 6px; }
+        }

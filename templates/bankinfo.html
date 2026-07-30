@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Transactions</title>
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/bankinfo.css' %}">
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    <div class="main-content">
+        <div class="row">
+            <!-- Bank Account Form -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Bank Account</h5>
+                    </div>
+                    <form method="POST" action="{% url 'transaction_list' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Bank Name</label>
+                            <input type="text" name="bank_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Branch Name</label>
+                            <input type="text" name="branch_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Number</label>
+                            <input type="text" name="account_number" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Opening Balance</label>
+                            <input type="number" name="opening_balance" class="form-control" step="0.01" value="0">
+                        </div>
+                        <button type="submit" class="btn">Add Bank Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Transaction Form -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Transaction</h5>
+                    </div>
+                    <form method="POST" action="{% url 'transaction_list' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Bank Account</label>
+                            <select name="bank_account" class="form-control" required>
+                                <option value="">Select Bank Account</option>
+                                {% for account in bank_accounts %}
+                                <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.account_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="transactionDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Narration</label>
+                            <input type="text" name="narration" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Type</label>
+                            <select name="transaction_type" class="form-control" required>
+                                <option value="debit">Debit</option>
+                                <option value="credit">Credit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" name="amount" class="form-control" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn">Add Transaction</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bank Accounts List -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Bank Accounts</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Account</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in bank_accounts %}
+                                <tr>
+                                    <td>{{ account.bank_name }}</td>
+                                    <td>{{ account.account_number }}</td>
+                                    <td>{{ account.current_balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Ledger Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Bank Ledger</h5>
+                    </div>
+                    <form method="GET" action="{% url 'transaction_list' %}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Select Bank Account</label>
+                                    <select name="ledger_bank" class="form-control" required>
+                                        <option value="">Select Bank Account</option>
+                                        {% for account in bank_accounts %}
+                                        <option value="{{ account.id }}" {% if selected_bank == account.id %}selected{% endif %}>
+                                            {{ account.bank_name }} - {{ account.account_number }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Month</label>
+                                    <select name="ledger_month" class="form-control" required>
+                                        <option value="">Select Month</option>
+                                        {% for month in months %}
+                                        <option value="{{ month.number }}" {% if selected_month == month.number %}selected{% endif %}>
+                                            {{ month.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Year</label>
+                                    <select name="ledger_year" class="form-control" required>
+                                        <option value="">Select Year</option>
+                                        {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                                            {{ year }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn">View Ledger</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if ledger_transactions %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bank Name</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                    <th>Purpose</th>
+                                    <th>Invoice No.</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in ledger_transactions %}
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.bank_account.bank_name }}</td>
+                                    <td>{% if transaction.transaction_type == 'debit' %}{{ transaction.amount }}{% else %}-{% endif %}</td>
+                                    <td>{% if transaction.transaction_type == 'credit' %}{{ transaction.amount }}{% else %}-{% endif %}</td>
+                                    <td>{{ transaction.narration }}</td>
+                                    <td>{{ transaction.invoice_number|default:"-" }}</td>
+                                    <td>{{ transaction.balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No transactions found for the selected period.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Transactions</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bank Account</th>
+                                    <th>Narration</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Balance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.bank_account.bank_name }} - {{ transaction.bank_account.account_number }}</td>
+                                    <td>{{ transaction.narration }}</td>
+                                    <td>{{ transaction.transaction_type|title }}</td>
+                                    <td>{{ transaction.amount }}</td>
+                                    <td>{{ transaction.balance }}</td>
+                                    <td>
+                                        <form method="POST" action="{% url 'delete_transaction' transaction.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this transaction?')">Delete</button>
+                                        </form>
+                                        <button type="button" class="btn edit" 
+                                            data-id="{{ transaction.id }}"
+                                            data-bank_account="{{ transaction.bank_account.id }}"
+                                            data-date="{{ transaction.date }}"
+                                            data-narration="{{ transaction.narration|escapejs }}"
+                                            data-transaction_type="{{ transaction.transaction_type }}"
+                                            data-amount="{{ transaction.amount }}"
+                                            onclick="openEditTransactionModal(this)">Edit</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div id="editTransactionModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:999; align-items:center; justify-content:center;">
+      <div style="background:white; padding:30px; border-radius:8px; min-width:300px; max-width:90vw; margin:40px auto; position:relative;">
+        <h3>Edit Transaction</h3>
+        <form id="editTransactionForm" method="post">
+          {% csrf_token %}
+          <input type="hidden" id="edit_transaction_id" name="id">
+          <div class="form-group">
+            <label>Bank Account</label>
+            <select id="edit_bank_account" name="bank_account" class="form-control" required>
+              {% for account in bank_accounts %}
+                <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.account_number }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="edit_date" name="transactionDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Narration</label>
+            <input type="text" id="edit_narration" name="narration" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Transaction Type</label>
+            <select id="edit_transaction_type" name="transaction_type" class="form-control" required>
+              <option value="debit">Debit</option>
+              <option value="credit">Credit</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" id="edit_amount" name="amount" class="form-control" step="0.01" required>
+          </div>
+          <button type="submit" class="btn">Save Changes</button>
+          <button type="button" onclick="closeEditTransactionModal()" class="btn btn-danger" style="margin-left:10px;">Cancel</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="{% static 'js/pages/bankinfo.js' %}"></script>
+</body>
+</html>

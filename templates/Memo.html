@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahmaniya Cash Memo</title>
+    <style>
+        @font-face {
+            font-family: 'DhakarchithiMJ';
+            src: url('fonts/DhakarchithiMJ.ttf') format('truetype');
+        }
+        body {
+            margin: 20px;
+            padding: 0;
+            background: #ffffff;
+            font-family: sans-serif;
+        }
+        .bangla {
+            font-family: 'DhakarchithiMJ', sans-serif;
+            font-size: 60px;
+        }
+        .cash-memo {
+            width: 80%;
+            max-width: 650px;
+            padding: 20px;
+            margin: auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+        }
+        .header .center {
+            flex: 1;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+        }
+        .header p {
+            margin: 2px 0;
+            font-size: 12px;
+        }
+        .info {
+            margin-top: 10px;
+            font-size: 15px;
+        }
+        .info p {
+            margin: 2px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #222;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        .totals-table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+        .totals-table td {
+            padding: 6px 8px;
+            font-size: 16px;
+        }
+        .totals-table .label {
+            text-align: right;
+            font-weight: bold;
+        }
+        .totals-table .value {
+            text-align: right;
+            min-width: 100px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .note {
+            text-align: left;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        @media (max-width: 700px) {
+            .cash-memo { width: 98%; padding: 5px; }
+            .bangla { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cash-memo">
+        <div class="header">
+            <div>
+                <img src="https://firebasestorage.googleapis.com/v0/b/khuji-68307.appspot.com/o/logo%20(2).png?alt=media&token=aff0f876-efd8-4a54-baf7-a5e5ce52ea2a" alt="Logo">
+            </div>
+            <div class="center">
+                <h2 class="bangla">রহমানিয়া</h2>
+                <p style="font-size:20px;">ইঞ্জিনিয়ারিং ওয়ার্কশপ</p>
+                <p style="font-size: 10px;">একটি আধুনিক কৃষি যন্ত্রপাতি তৈরির নির্ভরযোগ্য প্রতিষ্ঠান</p>
+                <p style="font-weight: bold;">পণ্য বিক্রয়ের বিল</p>
+                <p><strong>পার্টি কোড:</strong> ____</p>
+            </div>
+            <div>
+                <p>রকেট:০১৯৯৮১৫২৪২০</p>
+                <p>নজমুল:০১৯৯৮১৫২৪২৩</p>
+                <p>এমডি:০১৭১৬১২৪৬৮২</p>
+                <p style="white-space: nowrap;">মোঃ নজরুল ইসলাম: ০১৯৯৮১৫২৪২১</p>
+            </div>
+        </div>
+
+        <div class="info">
+            <p><strong>চালান নং:</strong> {{ sale.invoice_number }}</p>
+            <p><strong>ক্রেতা:</strong> {{ customer.name }}</p>
+            <p><strong>ঠিকানা:</strong> {{ customer.area }}</p>
+            <p><strong>সেলসম্যান:</strong> {{ salesman.name }}</p>
+            <p><strong>তারিখ:</strong> {{ sale.date|date:"d-m-Y" }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ক্রমিক নং</th>
+                    <th>পণ্যের বিবরণ</th>
+                    <th>পরিমাণ</th>
+                    <th>একক মূল্য</th>
+                    <th>লেস</th>
+                    <th>মোট</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in products %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="product-desc">{{ item.product }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price}}</td>
+                    <td>{{ item.less|default:0 }}</td>
+                    <td>{{ item.total}}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No sales found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="totals-table">
+            <tr>
+                <td class="label">মোট বিল:</td>
+                <td class="value">{{ mot_bill }} টাকা</td>
+            </tr>
+            <tr>
+                <td class="label">ডিসকাউন্ট:</td>
+                <td class="value">{{ sale.discount|default:0  }} টাকা</td>
+            </tr>
+            <tr>
+                <td class="label">লেস:</td>
+                <td class="value">{{ less|default:0  }} টাকা</td>
+            </tr>
+            <tr>
+                <td class="label">নেট বিল:</td>
+                <td class="value">{{ net_bill }} টাকা</td>
+            </tr>
+            <!-- <tr>
+                <td class="label">পূর্বের বকেয়া:</td>
+                <td class="value">{{ previous_due|default:0  }} টাকা</td>
+            </tr> -->
+            <!-- <tr>
+                <td class="label">এই বিলের বকেয়া:</td>
+                <td class="value">{{ sale.due|default:0  }} টাকা</td>
+            </tr> -->
+            <tr>
+                <td class="label">পরিশোধিত:</td>
+                <td class="value">{{ sale.payment_received|default:0  }} টাকা</td>
+            </tr>
+            <tr>
+                <td class="label">অগ্রিম:</td>
+                <td class="value">{{ customer_advance|default:0 }} টাকা</td>
+            </tr>
+            <tr>
+                <td class="label"><strong>সর্বমোট বকেয়া:</strong></td>
+                <td class="value"><strong>{{ total_due }} টাকা</strong></td>
+            </tr>
+        </table>
+
+        <div class="footer bangla">
+            <p>আপনার ক্রয়ের জন্য ধন্যবাদ!</p>
+            <p>স্বাক্ষর: ___________</p>
+            <div class="note">
+                <p><strong>দ্রষ্টব্য:</strong></p>
+                <p>১. এই বিলের টাকা পরিশোধের পর, টাকা প্রদানের রসিদ অবশ্যই সংরক্ষণ করবেন।</p>
+                <p>২. পণ্য গ্রহণের সময় অবশ্যই দেখে নেবেন।</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.product-desc').forEach(function(td) {
+            var t = td.textContent || td.innerText;
+            var i = t.indexOf(' - Tk');
+            if (i !== -1) td.textContent = t.substring(0, i).trim();
+        });
+    </script>
+</body>
+</html>

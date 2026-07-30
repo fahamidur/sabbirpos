@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>পাম্প এগ্রো মেশিনারীজ লিমিটেড - হ্যান্ড পাম্প, সেন্ট্রিফিউগাল পাম্প ও কৃষি যন্ত্রপাতি</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts - Bengali -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/index.css' %}">
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-water"></i>
+                Rahmaniya Pump
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#home">হোম</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">আমাদের সম্পর্কে</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#products">পণ্য</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gallery">গ্যালারি</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#blog">ব্লগ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">যোগাযোগ</a>
+                    </li>
+                </ul>
+                <div class="search-bar">
+                    <input type="text" placeholder="অনুসন্ধান করুন...">
+                    <button type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">মানসম্পন্ন পাম্প ও কৃষি যন্ত্রপাতি</h1>
+                <p class="hero-subtitle">হ্যান্ড পাম্প, সেন্ট্রিফিউগাল পাম্প এবং কৃষি যন্ত্রপাতি উৎপাদনে বাংলাদেশের অন্যতম শীর্ষস্থানীয় প্রতিষ্ঠান</p>
+                <a href="#products" class="btn btn-custom">আমাদের পণ্য দেখুন</a>
+                <a href="#contact" class="btn btn-custom-secondary">যোগাযোগ করুন</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section-padding">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                    <img src="https://i.ibb.co/Xx2Dfvnf/products.jpg" alt="আমাদের কারখানা" class="img-fluid about-img">
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <h2 class="section-title">আমাদের সম্পর্কে</h2>
+                    <p class="section-subtitle">২০০৫সাল থেকে আমরা মানসম্পন্ন পাম্প ও কৃষি যন্ত্রপাতি তৈরি করে আসছি</p>
+                    <p>পাম্প এগ্রো মেশিনারীজ লিমিটেড বাংলাদেশের অন্যতম শীর্ষস্থানীয় পাম্প ও কৃষি যন্ত্রপাতি প্রস্তুতকারক প্রতিষ্ঠান। আমরা হ্যান্ড পাম্প, সেন্ট্রিফিউগাল পাম্প এবং বিভিন্ন ধরনের কৃষি যন্ত্রপাতি উৎপাদন করে থাকি।</p>
+                    
+                    <div class="about-feature">
+                        <div class="about-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="about-text">
+                            <h4>মানসম্পন্ন পণ্য</h4>
+                            <p>আমরা শুধুমাত্র উচ্চমানের উপাদান ব্যবহার করে পণ্য তৈরি করি</p>
+                        </div>
+                    </div>
+                    
+                    <div class="about-feature">
+                        <div class="about-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="about-text">
+                            <h4>দক্ষ কর্মী</h4>
+                            <p>আমাদের দক্ষ প্রকৌশলী ও কর্মীরা সর্বোচ্চ মানের পণ্য তৈরি করে</p>
+                        </div>
+                    </div>
+                    
+                    <div class="about-feature">
+                        <div class="about-icon">
+                            <i class="fas fa-globe-asia"></i>
+                        </div>
+                        <div class="about-text">
+                            <h4>বিস্তৃত বাজার</h4>
+                            <p>আমাদের পণ্য সারা দেশে বিতরণ করা হয়</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="btn btn-custom mt-3">আরও জানুন</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">আমাদের পণ্য</h2>
+                <p class="section-subtitle">আমরা বিভিন্ন ধরনের পাম্প ও কৃষি যন্ত্রপাতি উৎপাদন করি</p>
+            </div>
+            
+            <!-- Product Catalog Banner -->
+            <div class="product-catalog-banner" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://z-cdn-media.chatglm.cn/files/f6ed4f39-d6ee-4aa6-8067-2f6699f46a12.jpeg?auth_key=1865787699-b2bbff3c40b749afa38442dc5b59553d-0-21f26e7a9b2fe4a3c1f0bf96a6818941" alt="পাম্প পণ্যের ক্যাটালগ" class="catalog-img">
+                <p class="catalog-caption">আমাদের সম্পূর্ণ পাম্প পণ্যের ক্যাটালগ - হ্যান্ড পাম্প, সেন্ট্রিফিউগাল পাম্প এবং কৃষি পাম্প</p>
+            </div>
+            
+            <!-- Product Category Tabs -->
+            <ul class="nav nav-tabs product-tabs" id="productTabs" role="tablist" data-aos="fade-up" data-aos-delay="200">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="handpump-tab" data-bs-toggle="tab" data-bs-target="#handpump" type="button" role="tab" aria-controls="handpump" aria-selected="true">হ্যান্ড পাম্প</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="centrifugal-tab" data-bs-toggle="tab" data-bs-target="#centrifugal" type="button" role="tab" aria-controls="centrifugal" aria-selected="false">সেন্ট্রিফিউগাল পাম্প</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="agricultural-tab" data-bs-toggle="tab" data-bs-target="#agricultural" type="button" role="tab" aria-controls="agricultural" aria-selected="false">কৃষি পাম্প</button>
+                </li>
+            </ul>
+            
+            <!-- Tab Content -->
+            <div class="tab-content" id="productTabsContent">
+                <!-- Hand Pumps -->
+                <div class="tab-pane fade show active" id="handpump" role="tabpanel" aria-labelledby="handpump-tab">
+                    <div class="product-filter" data-aos="fade-up" data-aos-delay="300">
+                        <button class="filter-btn active" data-filter="all">সব</button>
+                        <button class="filter-btn" data-filter="green">সবুজ</button>
+                        <button class="filter-btn" data-filter="purple">বেগুনি</button>
+                    </div>
+                    
+                    <div class="product-grid">
+                        <!-- Hand Pump 1 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="100" data-category="green">
+                            <div class="product-badge">নতুন</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/4d2defe6-8949-49e1-b147-17c5976800d0.jpeg?auth_key=1865788373-0d26a262c83b44d9934bf6c59859d038-0-ba24c3e65dec3e398d32d0c6432ff58e" class="product-img" alt="সবুজ হ্যান্ড পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">সবুজ হ্যান্ড পাম্প</h3>
+                                <p class="product-desc">টেকসই সবুজ ধাতু নির্মিত হ্যান্ড পাম্প, যা দীর্ঘস্থায়ী এবং সহজে ব্যবহারযোগ্য।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> দীর্ঘ হ্যান্ডেল সহ সহজ অপারেশন</li>
+                                    <li><i class="fas fa-check-circle"></i> মজবুত ধাতু নির্মিত</li>
+                                    <li><i class="fas fa-check-circle"></i> স্থিতিশীল বেস সহ স্থাপন সহজ</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hand Pump 2 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="200" data-category="green">
+                            <div class="product-badge">জনপ্রিয়</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/713ae52b-545c-474c-9481-3a6d59a3cb1d.jpeg?auth_key=1865788373-7fc20eb5e14641e6a20bf4f06ee59b40-0-f953a6156a7094173da5aa92353fa83b" class="product-img" alt="সবুজ ম্যানুয়াল পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">সবুজ ম্যানুয়াল পাম্প</h3>
+                                <p class="product-desc">লিভার মেকানিজম সহ সবুজ ম্যানুয়াল পাম্প, যা কম প্রচেষ্টায় বেশি পানি তোলে।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> লিভার মেকানিজম সহ দক্ষ অপারেশন</li>
+                                    <li><i class="fas fa-check-circle"></i> সিলিন্ডার আকৃতির পাম্প বডি</li>
+                                    <li><i class="fas fa-check-circle"></i> পার্শ্বীয় আউটলেট পাইপ</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hand Pump 3 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="300" data-category="purple">
+                            <div class="product-badge">বিক্রয়োত্তম</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/cfd45070-d6c1-4725-b7d3-92124bfc61c2.jpeg?auth_key=1865788373-effed0b3f28d4dd6af8d976eb1e16b3d-0-526a0d72590066e704cc838c8bbb2e68" class="product-img" alt="বেগুনি হ্যান্ড পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">বেগুনি হ্যান্ড পাম্প</h3>
+                                <p class="product-desc">আধুনিক ডিজাইনের বেগুনি হ্যান্ড পাম্প, যা ব্র্যান্ডেড লোগো সহ আকর্ষণীয়।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> দীর্ঘ হ্যান্ডেল সহ সহজ অপারেশন</li>
+                                    <li><i class="fas fa-check-circle"></i> ব্র্যান্ডেড লোগো সহ আকর্ষণীয় ডিজাইন</li>
+                                    <li><i class="fas fa-check-circle"></i> বাঁকানো আউটলেট নল</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Hand Pump 4 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="400" data-category="purple">
+                            <img src="https://z-cdn-media.chatglm.cn/files/de5b19e9-6c8b-4cfb-b6c4-e9b377798ae2.jpeg?auth_key=1865788373-74ee8836ce4144fd970729a8b9e3e6ab-0-468f869967b3452d925f3fda6ce83814" class="product-img" alt="বেগুনি ম্যানুয়াল পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">বেগুনি ম্যানুয়াল পাম্প</h3>
+                                <p class="product-desc">হারমিস ব্র্যান্ডের বেগুনি ম্যানুয়াল পাম্প, যা উচ্চমানের উপাদানে তৈরি।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> হারমিস ব্র্যান্ডের প্রিমিয়াম কোয়ালিটি</li>
+                                    <li><i class="fas fa-check-circle"></i> বাঁকানো হ্যান্ডেল সহ আরামদায়ক অপারেশন</li>
+                                    <li><i class="fas fa-check-circle"></i> মজবুত বেস সহ স্থিতিশীলতা</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Centrifugal Pumps -->
+                <div class="tab-pane fade" id="centrifugal" role="tabpanel" aria-labelledby="centrifugal-tab">
+                    <div class="product-grid">
+                        <!-- Centrifugal Pump 1 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="product-badge">শিল্প গ্রেড</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/14a3a595-3d9d-4b45-bd16-832a2f53c224.jpeg?auth_key=1865788373-256845cd79d3473e97bacdd189081c4d-0-f84610b944d592f7ce8682299b66e890" class="product-img" alt="নীল শিল্প পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">নীল শিল্প পাম্প</h3>
+                                <p class="product-desc">কাস্ট আয়রন বডি সহ নীল শিল্প পাম্প, যা ভারী শিল্প কাজের জন্য আদর্শ।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> কাস্ট আয়রন কনস্ট্রাকশন</li>
+                                    <li><i class="fas fa-check-circle"></i> রেড অ্যাডজাস্টমেন্ট নব</li>
+                                    <li><i class="fas fa-check-circle"></i> সার্কুলার অপারেটিং হুইল</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Centrifugal Pump 2 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="200">
+                            <div class="product-badge">উচ্চ চাপ</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/7b9687d2-53e9-49dd-8ce0-6369417e29d2.jpeg?auth_key=1865788373-9f535b74813f49799110f8b4086bf62e-0-c033c100490c10905e2791597d8a40dc" class="product-img" alt="নীল শিল্প পাম্প উইথ রেড আউটলেট">
+                            <div class="product-body">
+                                <h3 class="product-title">নীল শিল্প পাম্প উইথ রেড আউটলেট</h3>
+                                <p class="product-desc">রেড আউটলেট পাইপ সহ নীল শিল্প পাম্প, যা উচ্চ চাপে কাজ করতে পারে।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> রেড লাইনড আউটলেট পাইপ</li>
+                                    <li><i class="fas fa-check-circle"></i> লেফট সাইড হুইল অ্যাসেম্বলি</li>
+                                    <li><i class="fas fa-check-circle"></i> ইয়েলো আইডেন্টিফিকেশন লেবেল</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Centrifugal Pump 3 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="300">
+                            <img src="https://z-cdn-media.chatglm.cn/files/b29ec54a-7332-4c34-aade-b79540ba0990.jpeg?auth_key=1865788373-ba06da6c3d3e4054ae43d2f9eb9a7d9d-0-85f87b84fb4531cf3925f350d25a7934" class="product-img" alt="নীল ইন্ডাস্ট্রিয়াল পাম্প">
+                            <div class="product-body">
+                                <h3 class="product-title">নীল ইন্ডাস্ট্রিয়াল পাম্প</h3>
+                                <p class="product-desc">পাইপ, ট্রান্সমিশন কম্পোনেন্ট এবং সাপোর্ট স্ট্রাকচার সহ নীল ইন্ডাস্ট্রিয়াল পাম্প।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> ইন্টিগ্রেটেড পাইপ সিস্টেম</li>
+                                    <li><i class="fas fa-check-circle"></i> ট্রান্সমিশন কম্পোনেন্ট সহ</li>
+                                    <li><i class="fas fa-check-circle"></i> আইডেন্টিফিকেশন লেবেল সহ</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agricultural Pumps -->
+                <div class="tab-pane fade" id="agricultural" role="tabpanel" aria-labelledby="agricultural-tab">
+                    <div class="product-grid">
+                        <!-- Agricultural Pump 1 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="100">
+                            <div class="product-badge">কৃষি গ্রেড</div>
+                            <img src="https://z-cdn-media.chatglm.cn/files/7a50aa66-8333-40c9-8e9c-96e5c580b140.jpeg?auth_key=1865788373-4e4c3d6642294c7bb0bbf53f6541eb2f-0-c32e09748c9e7dc8bdb99ccf92b7e966" class="product-img" alt="কৃষি পাম্প সেট">
+                            <div class="product-body">
+                                <h3 class="product-title">কৃষি পাম্প সেট</h3>
+                                <p class="product-desc">বিভিন্ন ধরনের কৃষি পাম্পের সেট, যা কৃষি কাজের জন্য আদর্শ।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> মাল্টিপল পাম্প অপশন</li>
+                                    <li><i class="fas fa-check-circle"></i> টেকনিক্যাল স্পেসিফিকেশন টেবিল সহ</li>
+                                    <li><i class="fas fa-check-circle"></i> রেড অ্যান্ড গ্রে সেল ডিজাইন</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                        
+                        <!-- Agricultural Pump 2 -->
+                        <div class="product-card" data-aos="fade-up" data-aos-delay="200">
+                            <img src="https://z-cdn-media.chatglm.cn/files/88120915-8d59-448f-a134-d35d50c0fcf5.jpeg?auth_key=1865788373-281bfe64111747b48bd7637e62ab76b7-0-e8239d4f0dbb219c7dd729083ebdb12f" class="product-img" alt="কৃষি পাম্প ক্যাটালগ">
+                            <div class="product-body">
+                                <h3 class="product-title">কৃষি পাম্প ক্যাটালগ</h3>
+                                <p class="product-desc">স্থানীয় ভাষায় কৃষি পাম্পের ক্যাটালগ, যা সহজে বোঝা যায়।</p>
+                                <ul class="product-features">
+                                    <li><i class="fas fa-check-circle"></i> স্থানীয় ভাষায় বিস্তারিত বর্ণনা</li>
+                                    <li><i class="fas fa-check-circle"></i> টেকনিক্যাল প্যারামিটার টেবিল</li>
+                                    <li><i class="fas fa-check-circle"></i> মাল্টিপল মডেল অপশন</li>
+                                </ul>
+                                <button class="btn product-btn">বিস্তারিত দেখুন <i class="fas fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">পণ্য গ্যালারি</h2>
+                <p class="section-subtitle">আমাদের পণ্যগুলো ব্যবহারের বিভিন্ন দৃশ্য</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1593696140826-c58b021acf8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="হ্যান্ড পাম্প ব্যবহার" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="gallery-title">হ্যান্ড পাম্প ব্যবহার</h3>
+                            <p>গ্রামীণ এলাকায় হ্যান্ড পাম্প ব্যবহারের দৃশ্য</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="সেন্ট্রিফিউগাল পাম্প ব্যবহার" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="gallery-title">সেন্ট্রিফিউগাল পাম্প</h3>
+                            <p>শিল্প কারখানায় সেন্ট্রিফিউগাল পাম্প ব্যবহার</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="কৃষি পাম্প ব্যবহার" class="gallery-img">
+                        <div class="gallery-overlay">
+                            <h3 class="gallery-title">কৃষি পাম্প</h3>
+                            <p>কৃষি জমিতে পাম্প ব্যবহারের দৃশ্য</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="section-padding bg-light">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">সর্বশেষ খবর</h2>
+                <p class="section-subtitle">আমাদের কোম্পানি এবং পণ্য সম্পর্কে সর্বশেষ তথ্য</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="নতুন পণ্য" class="blog-img">
+                        <div class="blog-body">
+                            <div class="blog-date">অক্টোবর ১৫, ২০২৩</div>
+                            <h3 class="blog-title">নতুন হ্যান্ড পাম্প মডেল বাজারে</h3>
+                            <p class="blog-text">আমরা আমাদের নতুন হ্যান্ড পাম্প মডেল বাজারে ছেড়েছি, যা আরও টেকসই এবং সহজে ব্যবহারযোগ্য।</p>
+                            <a href="#" class="blog-link">আরও পড়ুন <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="কৃষি প্রযুক্তি" class="blog-img">
+                        <div class="blog-body">
+                            <div class="blog-date">সেপ্টেম্বর ২৮, ২০২৩</div>
+                            <h3 class="blog-title">কৃষি প্রযুক্তিতে আমাদের অবদান</h3>
+                            <p class="blog-text">আমাদের কৃষি পাম্প কৃষকদের জীবনযাত্রার মান উন্নয়নে গুরুত্বপূর্ণ ভূমিকা পালন করছে।</p>
+                            <a href="#" class="blog-link">আরও পড়ুন <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="blog-card">
+                        <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="শিল্প পাম্প" class="blog-img">
+                        <div class="blog-body">
+                            <div class="blog-date">আগস্ট ১০, ২০২৩</div>
+                            <h3 class="blog-title">শিল্প পাম্পের উন্নয়ন</h3>
+                            <p class="blog-text">আমরা আমাদের শিল্প পাম্পের দক্ষতা বৃদ্ধি করেছি যা বিদ্যুৎ সাশ্রয়ী এবং উচ্চ ক্ষমতাসম্পন্ন।</p>
+                            <a href="#" class="blog-link">আরও পড়ুন <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">আমাদের বৈশিষ্ট্য</h2>
+                <p class="section-subtitle">কেন আমাদের পণ্য বেছে নেবেন</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3 class="feature-title">মানসম্পন্ন পণ্য</h3>
+                        <p>আমরা শুধুমাত্র উচ্চমানের উপাদান ব্যবহার করে পণ্য তৈরি করি যা দীর্ঘস্থায়ী হয়।</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h3 class="feature-title">সেরা প্রযুক্তি</h3>
+                        <p>আমরা সর্বাধুনিক প্রযুক্তি ব্যবহার করে পণ্য তৈরি করি যা কার্যকর এবং নির্ভরযোগ্য।</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="feature-title">গ্রাহক সেবা</h3>
+                        <p>আমাদের দক্ষ গ্রাহক সেবা দল সর্বদা আপনার প্রয়োজনে পাশে আছে।</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h3 class="feature-title">দ্রুত ডেলিভারি</h3>
+                        <p>সারা দেশে দ্রুত ডেলিভারি সুবিধা নিশ্চিত করছি আমরা।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section-padding faq-section">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">সচরাচর জিজ্ঞাসিত প্রশ্ন</h2>
+                <p class="section-subtitle">আমাদের গ্রাহকদের কাছ থেকে প্রায়শই জিজ্ঞাসিত প্রশ্নাবলী</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    আপনাদের পণ্যের ওয়ারেন্টি কত দিন?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    আমাদের সমস্ত পণ্যের জন্য ১ বছরের প্রতিস্থাপন ওয়ারেন্টি রয়েছে। যেকোনো উৎপাদন ত্রুটির ক্ষেত্রে আমরা বিনামূল্যে প্রতিস্থাপন করে থাকি।
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    আমি কিভাবে আপনাদের পণ্য কিনতে পারি?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    আপনি আমাদের কারখানা বা দেশব্যাপী অবস্থিত আমাদের ডিলারদের কাছ থেকে সরাসরি পণ্য কিনতে পারেন। আপনি আমাদের ওয়েবসাইটের মাধ্যমেও অর্ডার করতে পারেন।
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    আপনাদের পণ্যের মূল্য কেমন?
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    আমাদের পণ্যের মূল্য মানের সাথে সামঞ্জস্যপূর্ণ। আমরা সর্বোচ্চ মানের পণ্য সরবরাহ করি সাশ্রয়ী মূল্যে। বিস্তারিত মূল্য তালিকার জন্য আমাদের সাথে যোগাযোগ করুন।
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    আপনারা কি পণ্য ইনস্টলেশন সার্ভিস দেন?
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    হ্যাঁ, আমরা আমাদের সমস্ত পণ্যের জন্য পেশাদার ইনস্টলেশন সার্ভিস প্রদান করি। আমাদের প্রশিক্ষিত টেকনিশিয়ানরা সঠিকভাবে পণ্য ইনস্টল করে থাকেন।
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="section-padding testimonial-section">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">গ্রাহকদের প্রতিক্রিয়া</h2>
+                <p class="section-subtitle">আমাদের গ্রাহকরা কী বলেন</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"পাম্প এগ্রো মেশিনারীজের হ্যান্ড পাম্প আমার জমিতে ব্যবহার করছি গত ৫ বছর ধরে। এটি খুবই টেকসই এবং রক্ষণাবেক্ষণ খুব সহজ।"</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="গ্রাহক" class="author-img">
+                            <div class="author-info">
+                                <h5>আব্দুল করিম</h5>
+                                <p>কৃষক, রাজশাহী</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"আমাদের ক্ষুদ্র শিল্পে পাম্প এগ্রো মেশিনারীজের সেন্ট্রিফিউগাল পাম্প ব্যবহার করছি। এটি অত্যন্ত কার্যকর এবং বিদ্যুৎ সাশ্রয়ী।"</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="গ্রাহক" class="author-img">
+                            <div class="author-info">
+                                <h5>সাবিনা ইয়াসমিন</h5>
+                                <p>ব্যবসায়ী, চট্টগ্রাম</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"পাম্প এগ্রো মেশিনারীজের কৃষি পাম্প আমার জমির সেচ ব্যবস্থাকে অনেক সহজ করেছে। এটি শক্তিশালী এবং জ্বালানি সাশ্রয়ী।"</p>
+                        <div class="testimonial-author">
+                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="গ্রাহক" class="author-img">
+                            <div class="author-info">
+                                <h5>মোঃ রফিকুল ইসলাম</h5>
+                                <p>কৃষক, খুলনা</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-padding">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">যোগাযোগ করুন</h2>
+                <p class="section-subtitle">আমাদের সাথে যোগাযোগ করতে নিচের ফর্মটি পূরণ করুন</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8" data-aos="fade-right">
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="আপনার নাম" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="email" class="form-control" placeholder="ইমেইল ঠিকানা" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="tel" class="form-control" placeholder="ফোন নম্বর" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" required>
+                                        <option value="" selected disabled>পণ্য নির্বাচন করুন</option>
+                                        <option>হ্যান্ড পাম্প</option>
+                                        <option>সেন্ট্রিফিউগাল পাম্প</option>
+                                        <option>কৃষি পাম্প</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <textarea class="form-control" rows="5" placeholder="আপনার বার্তা" required></textarea>
+                            <button type="submit" class="btn btn-custom">বার্তা পাঠান</button>
+                        </form>
+                    </div>
+                    
+                    <div class="map-container" data-aos="fade-up" data-aos-delay="200">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.980770619965!2d90.40762331533218!3d23.746105095612624!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b8b7a5a5b5b5%3A0x3a3a3a3a3a3a3a3a!2sKawran%20Bazar%2C%20Dhaka!5e0!3m2!1sen!2sbd!4v1620000000000!5m2!1sen!2sbd" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4" data-aos="fade-left">
+                    <div class="contact-info">
+                        <h3>যোগাযোগের তথ্য</h3>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4>ঠিকানা</h4>
+                                <p>Fultola Bazar, Jahangirabad, Shajahanpur,Bogura.<br>Post code - 5800</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h4>ফোন</h4>
+                                <p>01716124682<br>01857333003</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4>ইমেইল</h4>
+                                <p>info@pumpagro.com<br>sales@pumpagro.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4>কার্যসময়</h4>
+                                <p>রবিবার - বৃহস্পতিবার: ৯টা - ৬টা<br>শুক্রবার: ৯টা - ২টা</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0" data-aos="fade-up">
+                    <div class="footer-logo">
+                        <i class="fas fa-water"></i>
+                        পাম্প এগ্রো মেশিনারীজ
+                    </div>
+                    <p>বাংলাদেশের অন্যতম শীর্ষস্থানীয় পাম্প ও কৃষি যন্ত্রপাতি প্রস্তুতকারক প্রতিষ্ঠান।</p>
+                    <div class="social-icons mt-3">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="100">
+                    <h5 class="mb-4">দ্রুত লিংক</h5>
+                    <ul class="footer-links">
+                        <li><a href="#home"><i class="fas fa-angle-right"></i> হোম</a></li>
+                        <li><a href="#about"><i class="fas fa-angle-right"></i> আমাদের সম্পর্কে</a></li>
+                        <li><a href="#products"><i class="fas fa-angle-right"></i> পণ্য</a></li>
+                        <li><a href="#gallery"><i class="fas fa-angle-right"></i> গ্যালারি</a></li>
+                        <li><a href="#blog"><i class="fas fa-angle-right"></i> ব্লগ</a></li>
+                        <li><a href="#contact"><i class="fas fa-angle-right"></i> যোগাযোগ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="200">
+                    <h5 class="mb-4">আমাদের পণ্য</h5>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-angle-right"></i> হ্যান্ড পাম্প</a></li>
+                        <li><a href="#"><i class="fas fa-angle-right"></i> সেন্ট্রিফিউগাল পাম্প</a></li>
+                        <li><a href="#"><i class="fas fa-angle-right"></i> কৃষি পাম্প</a></li>
+                        <li><a href="#"><i class="fas fa-angle-right"></i> ট্রাক্টর</a></li>
+                        <li><a href="#"><i class="fas fa-angle-right"></i> পাওয়ার টিলার</a></li>
+                        <li><a href="#"><i class="fas fa-angle-right"></i> কাটার</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                    <h5 class="mb-4">নিউজলেটার</h5>
+                    <p>আমাদের সর্বশেষ পণ্য এবং অফার সম্পর্কে জানতে সাবস্ক্রাইব করুন।</p>
+                    <form class="mt-3" id="newsletterForm">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="আপনার ইমেইল" required>
+                            <button class="btn btn-primary" type="submit">সাবস্ক্রাইব</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; ২০২৩ পাম্প এগ্রো মেশিনারীজ লিমিটেড। সর্বস্বত্ব সংরক্ষিত।</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script src="{% static 'js/pages/index.js' %}"></script>
+</body>
+</html>

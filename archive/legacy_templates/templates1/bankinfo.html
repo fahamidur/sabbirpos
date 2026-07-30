@@ -1,0 +1,624 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Transactions</title>
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    :root {
+      --primary-color: #1a237e;
+      --secondary-color: #0d47a1;
+      --accent-color: #f44336;
+      --text-color: #2c3e50;
+      --light-bg: #f5f7fa;
+      --border-color: #e0e6ed;
+      --success-color: #00c853;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background: var(--light-bg);
+      color: var(--text-color);
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid #fff;
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: calc(100% - 250px);
+      transition: margin-left 0.3s;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: -15px;
+      width: 100%;
+    }
+
+    .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+
+    .col-12 {
+      flex: 0 0 100%;
+      max-width: 100%;
+      padding: 15px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 1.5rem;
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 500;
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+      background: #fff;
+      color: #1e293b;
+    }
+
+    .form-control:hover {
+      border-color: #cbd5e1;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.05);
+    }
+
+    .form-control::placeholder {
+      color: #94a3b8;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+
+    .btn {
+      padding: 0.625rem 1.25rem;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-danger {
+      background: var(--accent-color);
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 0.5rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9375rem;
+    }
+
+    .table th {
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 500;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .table tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 1200px) {
+      .col-md-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+        width: 100%;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+
+      .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+
+      .row {
+        margin: -10px;
+      }
+
+      .col-md-4, .col-12 {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .table th,
+      .table td {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+    </style>
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    <div class="main-content">
+        <div class="row">
+            <!-- Bank Account Form -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Bank Account</h5>
+                    </div>
+                    <form method="POST" action="{% url 'transaction_list' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Bank Name</label>
+                            <input type="text" name="bank_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Branch Name</label>
+                            <input type="text" name="branch_name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Account Number</label>
+                            <input type="text" name="account_number" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Opening Balance</label>
+                            <input type="number" name="opening_balance" class="form-control" step="0.01" value="0">
+                        </div>
+                        <button type="submit" class="btn">Add Bank Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Transaction Form -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Transaction</h5>
+                    </div>
+                    <form method="POST" action="{% url 'transaction_list' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Bank Account</label>
+                            <select name="bank_account" class="form-control" required>
+                                <option value="">Select Bank Account</option>
+                                {% for account in bank_accounts %}
+                                <option value="{{ account.id }}">{{ account.bank_name }} - {{ account.account_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" name="transactionDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Narration</label>
+                            <input type="text" name="narration" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Transaction Type</label>
+                            <select name="transaction_type" class="form-control" required>
+                                <option value="debit">Debit</option>
+                                <option value="credit">Credit</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" name="amount" class="form-control" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn">Add Transaction</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bank Accounts List -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Bank Accounts</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Bank</th>
+                                    <th>Account</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for account in bank_accounts %}
+                                <tr>
+                                    <td>{{ account.bank_name }}</td>
+                                    <td>{{ account.account_number }}</td>
+                                    <td>{{ account.current_balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Ledger Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Bank Ledger</h5>
+                    </div>
+                    <form method="GET" action="{% url 'transaction_list' %}" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Select Bank Account</label>
+                                    <select name="ledger_bank" class="form-control" required>
+                                        <option value="">Select Bank Account</option>
+                                        {% for account in bank_accounts %}
+                                        <option value="{{ account.id }}" {% if selected_bank == account.id %}selected{% endif %}>
+                                            {{ account.bank_name }} - {{ account.account_number }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Month</label>
+                                    <select name="ledger_month" class="form-control" required>
+                                        <option value="">Select Month</option>
+                                        {% for month in months %}
+                                        <option value="{{ month.number }}" {% if selected_month == month.number %}selected{% endif %}>
+                                            {{ month.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Year</label>
+                                    <select name="ledger_year" class="form-control" required>
+                                        <option value="">Select Year</option>
+                                        {% for year in years %}
+                                        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                                            {{ year }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <button type="submit" class="btn">View Ledger</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if ledger_transactions %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bank Name</th>
+                                    <th>Debit</th>
+                                    <th>Credit</th>
+                                    <th>Purpose</th>
+                                    <th>Invoice No.</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in ledger_transactions %}
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.bank_account.bank_name }}</td>
+                                    <td>{% if transaction.transaction_type == 'debit' %}{{ transaction.amount }}{% else %}-{% endif %}</td>
+                                    <td>{% if transaction.transaction_type == 'credit' %}{{ transaction.amount }}{% else %}-{% endif %}</td>
+                                    <td>{{ transaction.narration }}</td>
+                                    <td>{{ transaction.invoice_number|default:"-" }}</td>
+                                    <td>{{ transaction.balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No transactions found for the selected period.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Transactions</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Bank Account</th>
+                                    <th>Narration</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Balance</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.bank_account.bank_name }} - {{ transaction.bank_account.account_number }}</td>
+                                    <td>{{ transaction.narration }}</td>
+                                    <td>{{ transaction.transaction_type|title }}</td>
+                                    <td>{{ transaction.amount }}</td>
+                                    <td>{{ transaction.balance }}</td>
+                                    <td>
+                                        <form method="POST" action="{% url 'delete_transaction' transaction.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this transaction?')">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleNav() {
+        var sidebar = document.getElementById("sidebar");
+        if (sidebar.classList.contains("open")) {
+            sidebar.classList.remove("open");
+        } else {
+            sidebar.classList.add("open");
+        }
+    }
+    </script>
+</body>
+</html>

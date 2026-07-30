@@ -1,0 +1,296 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Ecommerce Store</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/checkout.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'homepage' %}"><i class="fas fa-shopping-bag me-2"></i>Ecommerce Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h2><i class="fas fa-shopping-bag me-2"></i>Checkout</h2>
+            <p class="text-muted mb-0">Please fill in your details to complete your order</p>
+        </div>
+
+        <form id="checkoutForm" onsubmit="placeOrder(event)">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Customer Information -->
+                    <div class="checkout-section">
+                        <h3 class="section-title"><i class="fas fa-user me-2"></i>Customer Information</h3>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customerName" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="customerName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customerEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="customerEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customerPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="customerPhone" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div class="checkout-section">
+                        <h3 class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Shipping Address</h3>
+                        <div class="mb-3">
+                            <label for="shippingAddress" class="form-label">Street Address *</label>
+                            <textarea class="form-control" id="shippingAddress" rows="3" required></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="postalCode" class="form-label">Postal Code *</label>
+                                <input type="text" class="form-control" id="postalCode" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="checkout-section">
+                        <h3 class="section-title"><i class="fas fa-credit-card me-2"></i>Payment Method</h3>
+                        <div class="payment-method">
+                            <label class="payment-option active" onclick="selectPayment('cash_on_delivery')">
+                                <input type="radio" name="paymentMethod" value="cash_on_delivery" checked>
+                                <i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery
+                            </label>
+                            <label class="payment-option" onclick="selectPayment('bank_transfer')">
+                                <input type="radio" name="paymentMethod" value="bank_transfer">
+                                <i class="fas fa-university me-2"></i>Bank Transfer
+                            </label>
+                            <label class="payment-option" onclick="selectPayment('mobile_banking')">
+                                <input type="radio" name="paymentMethod" value="mobile_banking">
+                                <i class="fas fa-mobile-alt me-2"></i>Mobile Banking
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Order Notes -->
+                    <div class="checkout-section">
+                        <h3 class="section-title"><i class="fas fa-sticky-note me-2"></i>Order Notes (Optional)</h3>
+                        <textarea class="form-control" id="orderNotes" rows="3" placeholder="Any special instructions or notes for your order..."></textarea>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Order Summary -->
+                    <div class="checkout-section">
+                        <h3 class="section-title"><i class="fas fa-receipt me-2"></i>Order Summary</h3>
+                        <div id="orderItems">
+                            <!-- Order items will be loaded here -->
+                        </div>
+                        <div class="order-summary">
+                            <div class="order-item">
+                                <span>Subtotal:</span>
+                                <span id="orderSubtotal">$0.00</span>
+                            </div>
+                            <div class="order-item">
+                                <span>Shipping:</span>
+                                <span id="orderShipping">$0.00</span>
+                            </div>
+                            <div class="order-item">
+                                <span>Discount:</span>
+                                <span id="orderDiscount">$0.00</span>
+                            </div>
+                            <div class="order-total">
+                                <span>Total:</span>
+                                <span id="orderTotal">$0.00</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-place-order" id="placeOrderBtn">
+                            <i class="fas fa-check-circle me-2"></i>Place Order
+                        </button>
+                        <a href="{% url 'cart' %}" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function getCart() {
+            const cartStr = localStorage.getItem('ecommerce_cart');
+            return cartStr ? JSON.parse(cartStr) : [];
+        }
+        
+        function selectPayment(method) {
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            document.querySelector(`input[value="${method}"]`).checked = true;
+        }
+        
+        function renderOrderSummary() {
+            const cart = getCart();
+            const orderItemsDiv = document.getElementById('orderItems');
+            
+            if (cart.length === 0) {
+                orderItemsDiv.innerHTML = '<p class="text-muted">No items in cart</p>';
+                return;
+            }
+            
+            let html = '';
+            cart.forEach(item => {
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                html += `
+                    <div class="order-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small class="text-muted">Qty: ${item.quantity} × $${item.price.toFixed(2)}</small>
+                        </div>
+                        <span>$${itemTotal}</span>
+                    </div>
+                `;
+            });
+            
+            orderItemsDiv.innerHTML = html;
+            updateOrderTotals();
+        }
+        
+        function updateOrderTotals() {
+            const cart = getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = subtotal > 50 ? 0 : 10;
+            const discount = 0;
+            const total = subtotal + shipping - discount;
+            
+            document.getElementById('orderSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('orderShipping').textContent = shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`;
+            document.getElementById('orderDiscount').textContent = `$${discount.toFixed(2)}`;
+            document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+        }
+        
+        async function placeOrder(event) {
+            event.preventDefault();
+            
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                window.location.href = "{% url 'cart' %}";
+                return;
+            }
+            
+            const formData = {
+                customer_name: document.getElementById('customerName').value,
+                customer_email: document.getElementById('customerEmail').value,
+                customer_phone: document.getElementById('customerPhone').value,
+                shipping_address: document.getElementById('shippingAddress').value,
+                city: document.getElementById('city').value,
+                postal_code: document.getElementById('postalCode').value,
+                payment_method: document.querySelector('input[name="paymentMethod"]:checked').value,
+                notes: document.getElementById('orderNotes').value,
+                products: cart,
+                subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                shipping: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) > 50 ? 0 : 10,
+                discount: 0
+            };
+            
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            
+            try {
+                const response = await fetch("{% url 'place_order' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Clear cart
+                    localStorage.removeItem('ecommerce_cart');
+                    // Redirect to success page or show success message
+                    alert('Order placed successfully! Order Number: ' + data.order_number);
+                    window.location.href = "{% url 'homepage' %}";
+                } else {
+                    alert('Error: ' + (data.error || 'Failed to place order'));
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Place Order';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Place Order';
+            }
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                window.location.href = "{% url 'cart' %}";
+                return;
+            }
+            renderOrderSummary();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Adjustment - Factory POS Dashboard</title>
+  {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/add_expence.css' %}">
+</head>
+<body>
+  {% include 'nav.html' %}
+  <!-- Sidebar Navigation -->
+ <!-- <div class="sidebar" id="sidebar">
+  <a href="{% url 'dashboard' %}">Dashboard</a>
+  <a href="{% url 'salesman_list' %}">Salesman</a>
+  <a href="{% url 'pos_dashboard' %}">POS</a>
+  <a href="{% url 'customer_list' %}">Customer</a>
+  <a href="{% url 'product_list' %}">Product</a>
+  <a href="{% url 'all_sales' %}">All Sales</a>
+  <a href="{% url 'stockaddjust' %}">Add Stock</a>
+  <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+  <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+  <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+  <a href="{% url 'expence_list' %}">Expense Create</a>
+  <a href="{% url 'filter_sales' %}">Salesman Report</a>
+  <a href="{% url 'filter_adai' %}">Adai Report</a>
+  <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+  <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+  <a href="{% url 'add_expence' %}">Add Expense</a>
+  <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+</div> -->
+  <div class="main-content">
+    <form>
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="input-group">
+          <label for="expDate">Date:</label>
+          <input type="date" id="expDate" name="expDate">
+        </div>
+        <div class="input-group">
+          <label for="suplierSelect">Supplier</label>
+        <select name="suplier" id="suplierSelect" required>
+          <option value="">--Select Supplier--</option>
+          {% for suplier in suplier_list %}
+            <option value="{{ suplier }}">{{ suplier }}</option>
+          {% endfor %}
+        </select>
+        </div>
+        <div class="input-group">
+          <label for="narrationInput">Narration:</label>
+          <input type="text" id="narrationInput" name="narrationInput" placeholder="Narration">
+        </div>
+        <div class="input-group">
+          <label for="paymentType">Payment Type</label>
+          <select id="paymentType">
+            <option value="">--Select Payment Type--</option>
+            <option value="1">Due Payment</option>
+            <option value="2">Advance Payment</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="amountInput">Amount:</label>
+          <input type="number" id="amountInput" min="1" value="1">
+        </div>
+      </div>
+      <button class="btn" type="button" onclick="addExpense()">Submit</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Supplier</th>
+          <th>Narration</th>
+          <th>Due</th>
+          <th>Advance</th>
+          <th>Total Pay</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for exp in expence_list %}
+        <tr id="row-{{ exp.id }}">
+          <td>{{ exp.suplier }}</td>
+          <td>{{ exp.narration }}</td>
+          <td>{{ exp.due }}</td>
+          <td>{{ exp.advance }}</td>
+          <td>{{ exp.total_pay }}</td>
+          <td>{{ exp.date }}</td>
+          <td>
+            <button class="btn action-btn" onclick="openEditDialog('{{ exp.id }}', '{{ exp.suplier }}', '{{ exp.narration }}', '{{ exp.due }}', '{{ exp.advance }}', '{{ exp.total_pay }}', '{{ exp.date }}')">Edit</button>
+            <form method="post" action="{% url 'delete_expence' exp.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button class="btn action-btn" onclick="return confirm('Are you sure you want to delete this expense?');">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Dialog -->
+  <div id="editDialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+    <h3>Edit Expense</h3>
+    <form id="editForm">
+      <input type="hidden" id="editExpId">
+      <div class="input-group">
+        <label for="editSuplier">Supplier:</label>
+        <input type="text" id="editSuplier">
+      </div>
+      <div class="input-group">
+        <label for="editNarration">Narration:</label>
+        <input type="text" id="editNarration">
+      </div>
+      <div class="input-group">
+        <label for="editDue">Due:</label>
+        <input type="number" id="editDue">
+      </div>
+      <div class="input-group">
+        <label for="editAdvance">Advance:</label>
+        <input type="number" id="editAdvance">
+      </div>
+      <div class="input-group">
+        <label for="editTotalPay">Total Pay:</label>
+        <input type="number" id="editTotalPay">
+      </div>
+      <div class="input-group">
+        <label for="editDate">Date:</label>
+        <input type="date" id="editDate">
+      </div>
+      <button type="button" class="btn" onclick="saveEdit()">Save</button>
+      <button type="button" class="btn" onclick="closeEditDialog()">Cancel</button>
+    </form>
+  </div>
+  <!-- Overlay -->
+  <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;" onclick="closeEditDialog()"></div>
+
+  <script>
+    function toggleNav() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+    }
+
+    let suplierSelect, amountInput, paymentType, csrfToken;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      suplierSelect = document.getElementById('suplierSelect');
+      amountInput = document.getElementById('amountInput');
+      paymentType = document.getElementById('paymentType');
+      csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    });
+
+    function addExpense() {
+      if (!suplierSelect || !amountInput || !csrfToken) {
+        alert('Required elements not found!');
+        return;
+      }
+      if (!suplierSelect.value) {
+        alert('Please select a supplier');
+        return;
+      }
+      const amount = parseFloat(amountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+      const dateInput = document.getElementById('expDate');
+      const date = dateInput ? dateInput.value : null;
+      if (!date) {
+        alert('Please select a date');
+        return;
+      }
+      const narration = document.getElementById('narrationInput').value;
+
+      fetch('{% url "add_expence" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken.value
+        },
+        body: JSON.stringify({
+          suplier: suplierSelect.value,
+          date: date,
+          amount: amount,
+          money_type: paymentType.value,
+          narration: narration
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Expense updated successfully!');
+          window.location.reload();
+        } else {
+          throw new Error(data.error || 'Unknown error occurred');
+        }
+      })
+      .catch(error => {
+        alert(`Error: ${error.message}`);
+        console.error('Error:', error);
+      });
+    }
+
+    function openEditDialog(expId, suplier, narration, due, advance, total_pay, date) {
+      document.getElementById('editExpId').value = expId;
+      document.getElementById('editSuplier').value = suplier;
+      document.getElementById('editNarration').value = narration;
+      document.getElementById('editDue').value = due;
+      document.getElementById('editAdvance').value = advance;
+      document.getElementById('editTotalPay').value = total_pay;
+      document.getElementById('editDate').value = date;
+      document.getElementById('editDialog').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closeEditDialog() {
+      document.getElementById('editDialog').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
+    function saveEdit() {
+      const expId = document.getElementById('editExpId').value;
+      const updatedData = {
+        suplier: document.getElementById('editSuplier').value,
+        narration: document.getElementById('editNarration').value,
+        due: parseFloat(document.getElementById('editDue').value),
+        advance: parseFloat(document.getElementById('editAdvance').value),
+        total_pay: parseFloat(document.getElementById('editTotalPay').value),
+        date: document.getElementById('editDate').value,
+      };
+
+      fetch(`/update_expence/${expId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken.value
+        },
+        body: JSON.stringify(updatedData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Expense updated successfully!');
+          window.location.reload();
+        } else {
+          alert(`Error: ${data.error}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the expense.');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top, #e0e7ff 0%, #eef2ff 45%, #f8fafc 100%);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-shell {
+            width: 100%;
+            max-width: 960px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .panel {
+            padding: 28px;
+        }
+        .panel + .panel {
+            border-left: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .title {
+            margin: 0 0 6px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .subtitle {
+            margin: 0 0 18px;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #334155;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: #ffffff;
+        }
+        .form-group input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 14px;
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(79, 70, 229, 0.3);
+        }
+        .btn-secondary {
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
+        .alert {
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.92rem;
+        }
+        .error {
+            color: #991b1b;
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+        .success {
+            color: #065f46;
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+        }
+        .note {
+            margin: 8px 0 16px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+        .divider {
+            margin: 16px 0;
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+        }
+        @media (max-width: 850px) {
+            .auth-shell {
+                grid-template-columns: 1fr;
+            }
+            .panel + .panel {
+                border-left: 0;
+                border-top: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-shell">
+        <section class="panel">
+            <h1 class="title">Admin Login</h1>
+            <p class="subtitle">Sign in to access dashboard tools and reports.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'auth' in message.tags %}
+                    <p class="alert {% if 'error' in message.tags %}error{% else %}success{% endif %}">{{ message }}</p>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if error %}
+            <p class="alert error">{{ error }}</p>
+        {% endif %}
+
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2 class="title">Forgot Password?</h2>
+            <p class="subtitle">Request a reset code and update credentials securely.</p>
+
+            <form method="POST" action="{% url 'request_password_reset_code' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">Send Reset Code</button>
+            </form>
+            <p class="note">Code যাবে: <strong>ipassword@rahmaniyapump.com</strong></p>
+
+            <hr class="divider">
+
+            <form method="POST" action="{% url 'reset_admin_credentials' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="code">Reset Code</label>
+                    <input type="text" id="code" name="code" maxlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_username">New Username</label>
+                    <input type="text" id="new_username" name="new_username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn">Update Username & Password</button>
+            </form>
+        </section>
+    </div>
+</body>
+</html>

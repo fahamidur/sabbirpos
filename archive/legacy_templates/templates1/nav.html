@@ -1,0 +1,36 @@
+{% load static %}
+<span class="burger" onclick="toggleNav()">☰</span>
+<div class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'salesman_list' %}">Salesman</a>
+    <a href="{% url 'pos_dashboard' %}">POS</a>
+    <a href="{% url 'customer_list' %}">Customer</a>
+    <a href="{% url 'product_list' %}">Product</a>
+    <a href="{% url 'all_sales' %}">All Sales</a>
+    <a href="{% url 'pending_sales' %}" class="btn btn-warning">Pending Sales</a>
+    <a href="{% url 'stockaddjust' %}">Add Stock</a>
+    <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+    <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+    <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+    <a href="{% url 'expence_list' %}">Expense Create</a>
+    <a href="{% url 'filter_sales' %}">Salesman Report</a>
+    <a href="{% url 'filter_adai' %}">Adai Report</a>
+    <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+    <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+    <a href="{% url 'add_expence' %}">Add Expense</a>
+    <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+    <a href="{% url 'marketing_cost' %}">Add Marketing cost</a>
+    <a href="{% url 'marketing_cost_list' %}">Marketing cost list</a>
+    <a href="{% url 'profit_report' %}">Profit report</a>
+</div>
+
+<script>
+function toggleNav() {
+    var sidebar = document.getElementById("sidebar");
+    if (sidebar.classList.contains("open")) {
+        sidebar.classList.remove("open");
+    } else {
+        sidebar.classList.add("open");
+    }
+}
+</script> 

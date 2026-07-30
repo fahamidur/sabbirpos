@@ -1,0 +1,543 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factory POS Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      background-color: var(--light-bg);
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+    header {
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .pos-section {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .pos-section h2 { margin-bottom: 15px; }
+    .additional-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .additional-info .input-group {
+      flex: 1 1 200px;
+      min-width: 200px;
+    }
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .pos-form {
+      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .pos-form label {
+      font-weight: bold;
+    }
+    .pos-form select,
+    .pos-form input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .btn:hover { background-color: #218838; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td { border: 1px solid #ddd; }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      font-size: 1rem;
+    }
+    th { background-color: #f4f4f4; }
+    .remove-btn { background-color: #e63946; }
+    .payment-info {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .payment-info label { font-weight: bold; margin-right: 10px; }
+    .payment-info input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 150px;
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+      .additional-info { flex-direction: column; gap: 10px; }
+      header { flex-direction: column; align-items: flex-start; }
+      header h1 { margin-bottom: 10px; }
+      .pos-form { flex-direction: column; align-items: stretch; }
+      .pos-form label,
+      .pos-form select,
+      .pos-form input,
+      .btn { margin-bottom: 10px; }
+      .payment-info { align-items: stretch; }
+      .payment-info input { width: 100%; }
+      table {
+        font-size: 14px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      th, td { padding: 6px; }
+    }
+    .action-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+    
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+    
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <span class="burger" onclick="toggleNav()">☰</span>
+    <div class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'salesman_list' %}">Salesman</a>
+    <a href="{% url 'pos_dashboard' %}">POS</a>
+    <a href="{% url 'customer_list' %}">Customer</a>
+    <a href="{% url 'product_list' %}">Product</a>
+    <a href="{% url 'all_sales' %}">All Sales</a>
+    <a href="{% url 'stockaddjust' %}">Add Stock</a>
+    <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+    <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+    <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+    <a href="{% url 'expence_list' %}">Expense Create</a>
+    <a href="{% url 'filter_sales' %}">Salesman Report</a>
+    <a href="{% url 'filter_adai' %}">Adai Report</a>
+    <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+    <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+    <a href="{% url 'add_expence' %}">Add Expense</a>
+    <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+  </div>
+  <div class="main-content">
+    <header>
+      <h1>Point of Sale</h1>
+      <div>User: Admin</div>
+    </header>
+
+    <div class="pos-section">
+      <h2>New Sale</h2>
+
+      <div class="additional-info">
+        <div class="input-group">
+          <label for="warehouse">Warehouse</label>
+          <input type="text" id="warehouse" value="Rahmaniya Pump" readonly>
+        </div>
+        <div class="input-group">
+          <label for="salesmanSelect">Salesman</label>
+          <select id="salesmanSelect">
+            <option value="">--Select Salesman--</option>
+            {% for sm in salesman %}
+            <option value="{{ sm.id }}">{{ sm.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="customerSelect">Customer</label>
+          <!-- <select id="customerSelect">
+            <option value="">--Select Customer--</option>
+            {% for cust in customers %}
+              <option value="{{ cust.id }}">{{ cust.name }}</option>
+            {% endfor %}
+          </select> -->
+          <select id="customerSelect" onchange="showCustomerInfo()">
+            <option value="">--Select Customer--</option>
+            {% for cust in customers %}
+              <option 
+                value="{{ cust.id }}" 
+                data-due="{{ cust.due }}" 
+                data-advance="{{ cust.Advance }}">
+                {{ cust.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div id="customerInfo" style="margin-top: 10px; font-weight: bold;">
+          <!-- Due and Advance will appear here -->
+        </div>
+      </div>
+      
+      <div class="pos-form">
+        <label for="productSelect">Product:</label>
+        <select id="productSelect">
+          <option value="">--Select Product--</option>
+          {% for product in products %}
+            <option data-id="{{ product.id }}" data-price="{{ product.rate }}">
+              {{ product.name }} - Tk{{ product.rate }}
+            </option>
+          {% endfor %}
+        </select>
+        <label for="quantityInput">Qty:</label>
+        <input type="number" id="quantityInput" min="1" value="1" />
+        <label for="lessInput">Less per unit:</label>
+        <input type="number" id="lessInput" min="0" value="0" />
+        <button class="btn" onclick="addToCart()">Add to Cart</button>
+      </div>
+      
+      <table id="cartTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Less</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="cartTableBody">
+          <!-- Items will be dynamically added here -->
+        </tbody>
+      </table>
+      
+      <div style="text-align: right; margin-top: 10px;">
+        <strong>Grand Total: Tk<span id="grandTotal">0</span></strong>
+      </div>
+      
+      <div class="payment-info">
+        <div>
+          <label for="discountInput">Discount %:</label>
+          <input type="number" id="discountInput" min="0" value="0" oninput="calculateDue()">
+        </div>
+        <div>
+          <label for="lessInput">Less Amount:</label>
+          <input type="number" id="lessInput" min="0" value="0" oninput="calculateDue()">
+        </div>
+        <div>
+          <label for="paymentInput">Payment:</label>
+          <input type="number" id="paymentInput" min="0" value="0" oninput="calculateDue()">
+        </div>
+        <div>
+          <strong>Due: Tk<span id="dueAmount">0.00</span></strong>
+        </div>
+      </div>
+      
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="btn" onclick="completeSale()">Complete Sale</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleNav() {
+      var sidebar = document.getElementById('sidebar');
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      } else {
+        sidebar.classList.add('open');
+      }
+    }
+
+    let cart = [];
+
+    function addToCart() {
+      const productSelect = document.getElementById('productSelect');
+      const quantityInput = document.getElementById('quantityInput');
+      const lessInput = document.getElementById('lessInput');
+      const selectedOption = productSelect.options[productSelect.selectedIndex];
+
+      if (!selectedOption || selectedOption.value === "") {
+        alert('Please select a product.');
+        return;
+      }
+      
+      const productName = selectedOption.text;
+      const price = parseFloat(selectedOption.getAttribute('data-price'));
+      const quantity = parseInt(quantityInput.value);
+      const lessPerUnit = parseFloat(lessInput.value) || 0;
+      const less = lessPerUnit * quantity;
+      const total = (price * quantity) - less;
+      const id = selectedOption.getAttribute('data-id');
+
+      cart.push({ product: productName, price, quantity, less, lessPerUnit, total, id });
+      renderCart();
+    }
+
+    function renderCart() {
+      const tbody = document.getElementById('cartTableBody');
+      tbody.innerHTML = '';
+      let grandTotal = 0;
+
+      cart.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.product}</td>
+          <td>Tk${item.price}</td>
+          <td>${item.quantity}</td>
+          <td>
+            <input type="number" value="${item.lessPerUnit}" 
+                   onchange="updateLess(${index}, this.value)" 
+                   style="width: 80px;" min="0">
+          </td>
+          <td>Tk${item.total}</td>
+          <td>
+            <button onclick="removeFromCart(${index})" class="action-btn delete-btn">Remove</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+        grandTotal += item.total;
+      });
+
+      document.getElementById('grandTotal').textContent = grandTotal;
+      calculateDue();
+    }
+
+    function updateLess(index, newLessPerUnit) {
+      const item = cart[index];
+      item.lessPerUnit = parseFloat(newLessPerUnit) || 0;
+      item.less = item.lessPerUnit * item.quantity;
+      item.total = (item.price * item.quantity) - item.less;
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function calculateDue() {
+      let grandTotal = 0;
+      cart.forEach(item => {
+        grandTotal += item.total;
+      });
+      document.getElementById('grandTotal').textContent = grandTotal;
+
+      const discountPercentage = parseFloat(document.getElementById('discountInput').value) || 0;
+      const lessAmount = parseFloat(document.getElementById('lessInput').value) || 0;
+      const discountAmount = grandTotal * discountPercentage / 100;
+      const discountedTotal = grandTotal - discountAmount - lessAmount;
+      const payment = parseFloat(document.getElementById('paymentInput').value) || 0;
+      const due = discountedTotal - payment;
+      document.getElementById('dueAmount').textContent = due.toFixed(2);
+    }
+
+    function completeSale() {
+      if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+      }
+
+      const salesman = document.getElementById('salesmanSelect').value;
+      const customer = document.getElementById('customerSelect').value;
+      const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+      const less = parseFloat(document.getElementById('lessInput').value) || 0;
+      const payment_received = parseFloat(document.getElementById('paymentInput').value) || 0;
+      let total_price = 0;
+      cart.forEach(item => {
+        total_price += item.total;
+      });
+      const due = parseFloat(document.getElementById('dueAmount').textContent) || 0;
+
+      const payload = {
+        salesman: salesman,
+        customer: customer,
+        products: cart,
+        total_price: total_price,
+        discount: discount,
+        less: less,
+        payment_received: payment_received,
+        due: due,
+      };
+
+      fetch('/save-sale/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Sale completed and saved!');
+          cart = [];
+          document.getElementById('paymentInput').value = 0;
+          document.getElementById('discountInput').value = 0;
+          document.getElementById('lessInput').value = 0;
+          renderCart();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        alert('Error: ' + error);
+      });
+    }
+    function showCustomerInfo() {
+      const select = document.getElementById('customerSelect');
+      const infoDiv = document.getElementById('customerInfo');
+      const selected = select.options[select.selectedIndex];
+      if (selected && selected.value) {
+        const due = selected.getAttribute('data-due') || 0;
+        const advance = selected.getAttribute('data-advance') || 0;
+        infoDiv.innerHTML = `Due: Tk ${parseFloat(due).toFixed(2)} &nbsp; | &nbsp; Advance: Tk ${parseFloat(advance).toFixed(2)}`;
+      } else {
+        infoDiv.innerHTML = '';
+      }
+    }
+  </script>
+</body>
+</html>

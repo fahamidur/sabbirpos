@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahmaniya Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/report.css' %}">
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    <div class="main-content">
+        <div class="dash-header">
+            <h1 class="dash-title">Reports <span>Dashboard</span></h1>
+        </div>
+
+        <form method="post" action="{% url 'dashboard' %}">
+            {% csrf_token %}
+            <div class="filter-card">
+                <div>
+                    <label for="month">Month</label>
+                    <select id="month" name="month">
+                        {% for month in months %}
+                        <option value="{{ month.number }}" {% if month.number == selected_month %}selected{% endif %}>{{ month.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="year">Year</label>
+                    <select id="year" name="year">
+                        {% for year in years %}
+                        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-filter">Apply</button>
+            </div>
+        </form>
+
+        <!-- KPI cards - current month at a glance -->
+        <div class="kpi-grid">
+            <div class="kpi-card sales">
+                <div class="kpi-label">মোট বিক্রি </div>
+                <div class="kpi-value">{{ total_sales.all_time|default:0|floatformat:0 }} ৳</div>
+            </div>
+            <div class="kpi-card commission">
+                <div class="kpi-label">মোট কমিশন</div>
+                <div class="kpi-value">{{ total_commission.all_time|default:0|floatformat:0 }} ৳</div>
+            </div>
+            <div class="kpi-card less">
+                <div class="kpi-label">লেস</div>
+                <div class="kpi-value">{{ less.all_time|default:0|floatformat:0 }} ৳</div>
+            </div>
+            <div class="kpi-card due">
+                <div class="kpi-label">বকেয়া </div>
+                <div class="kpi-value">{{ due.all_time|default:0|floatformat:0 }} ৳</div>
+            </div>
+            <div class="kpi-card payment">
+                <div class="kpi-label">মোট আদায়</div>
+                <div class="kpi-value">{{ mot_adai.all_time|default:0|floatformat:0 }} ৳</div>
+            </div>
+        </div>
+
+        <!-- Full comparison table -->
+        <div class="section-card">
+            <div class="section-card-header">{{ dashboard_date }} – তুলনা</div>
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>বিবরণ</th>
+                            <th>পূর্বের মাস</th>
+                            <th>মোট</th>
+                            <th>চলতি মাস</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-label">মোট বিক্রি</td>
+                            <td class="num">{{ total_sales.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ total_sales.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ total_sales.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">মোট কমিশন</td>
+                            <td class="num">{{ total_commission.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ total_commission.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ total_commission.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">লেস</td>
+                            <td class="num">{{ less.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ less.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ less.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">কমিশন বাদ টাকা</td>
+                            <td class="num">{{ after_discount.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ after_discount.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ after_discount.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">পূর্বের বকেয়া</td>
+                            <td class="num">{{ due.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ due.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ due.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">অগ্রিম জমা</td>
+                            <td class="num">{{ advance_adai.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ advance_adai.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ advance_adai.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">পেমেন্ট আদায়</td>
+                            <td class="num">{{ payment_received.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ payment_received.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ payment_received.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">বাকি আদায়</td>
+                            <td class="num">{{ due_adai.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ due_adai.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ due_adai.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="row-label">মোট আদায়</td>
+                            <td class="num">{{ mot_adai.previous_month|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ mot_adai.all_time|default:0|floatformat:0 }}</td>
+                            <td class="num">{{ mot_adai.current_month|default:0|floatformat:0 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="section-card orders-section">
+            <div class="section-card-header">All Orders</div>
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Order Number</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_number|default:"—" }}</td>
+                            <td>{{ order.customer_name }}</td>
+                            <td>{{ order.customer_phone }}</td>
+                            <td>৳ {{ order.total_price|floatformat:2 }}</td>
+                            <td>
+                                <span class="status-badge status-{{ order.status }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ order.date|date:"Y-m-d H:i" }}</td>
+                            <td>{{ order.payment_method|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-state">No orders found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/pages/report.js' %}"></script>
+</body>
+</html>

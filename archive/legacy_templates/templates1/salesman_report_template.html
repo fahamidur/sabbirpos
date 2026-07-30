@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesman Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .report-title {
+            font-size: 20px;
+            color: #333;
+        }
+        .report-info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .summary-box {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        .summary-item {
+            flex: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .summary-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .summary-item .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        @media print {
+            body {
+                margin: 20px;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-name">Rahmaniya Pump</div>
+        <div class="report-title">Salesman Performance Report</div>
+    </div>
+
+    <div class="report-info">
+        <p><strong>Salesman:</strong> {{ salesman_name }}</p>
+        <p><strong>Period:</strong> {{ month_name }} {{ year }}</p>
+        <p><strong>Report Date:</strong> {{ current_date }}</p>
+    </div>
+
+    <div class="summary-box">
+        <div class="summary-item">
+            <h3>Total Sales</h3>
+            <div class="value">৳{{ total_sales|floatformat:2 }}</div>
+        </div>
+        <div class="summary-item">
+            <h3>Total Collection</h3>
+            <div class="value">৳{{ total_collection|floatformat:2 }}</div>
+        </div>
+        <div class="summary-item">
+            <h3>Total Commission</h3>
+            <div class="value">৳{{ total_commission|floatformat:2 }}</div>
+        </div>
+        <div class="summary-item">
+            <h3>Total Due</h3>
+            <div class="value">৳{{ total_due|floatformat:2 }}</div>
+        </div>
+    </div>
+
+    <h2>Sales Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Payment Received</th>
+                <th>Due</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in sales %}
+            <tr>
+                <td>{{ sale.invoice_number }}</td>
+                <td>{{ sale.date }}</td>
+                <td>{{ sale.customer }}</td>
+                <td>৳{{ sale.total_price|floatformat:2 }}</td>
+                <td>৳{{ sale.payment_received|floatformat:2 }}</td>
+                <td>৳{{ sale.due|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Collection Details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Due Collection</th>
+                <th>Advance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adai in adai_records %}
+            <tr>
+                <td>{{ adai.date }}</td>
+                <td>{{ adai.customer }}</td>
+                <td>৳{{ adai.due|floatformat:2 }}</td>
+                <td>৳{{ adai.advance|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Generated on {{ current_date }} | This is a computer-generated report</p>
+    </div>
+</body>
+</html> 

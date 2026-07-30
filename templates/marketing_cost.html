@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing Cost - Rahmaniya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'nav.css' %}">
+  <style>
+    :root {
+      --dash-bg: #f0f2f6;
+      --card-bg: #ffffff;
+      --sidebar-bg: #1a1d29;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #10b981;
+      --muted: #64748b;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; display: flex; background: var(--dash-bg); min-height: 100vh; color: var(--text); }
+    .sidebar { background: var(--sidebar-bg); color: white; width: 260px; height: 100vh; position: fixed; top: 0; left: 0; padding-top: 24px; display: flex; flex-direction: column; gap: 2px; transition: 0.3s; z-index: 100; box-shadow: var(--shadow); overflow-y: auto; }
+    .sidebar a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 12px 24px; display: block; transition: all 0.2s; border-left: 3px solid transparent; font-size: 0.9rem; font-weight: 500; }
+    .sidebar a:hover { background: rgba(255,255,255,0.08); border-left-color: var(--primary); color: white; }
+    .burger { display: none; font-size: 22px; cursor: pointer; color: white; padding: 12px 14px; position: fixed; top: 12px; left: 12px; z-index: 101; background: var(--sidebar-bg); border-radius: var(--radius-sm); }
+    .main-content { margin-left: 260px; padding: 28px 32px 40px; flex-grow: 1; min-width: 0; transition: margin-left 0.3s; }
+    .dash-title { font-size: 1.75rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 28px; }
+    .dash-title span { color: var(--primary); }
+    .form-card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 28px; }
+    .form-card h3 { font-size: 1rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; }
+    .input-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .input-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .input-group input, .input-group select { padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: inherit; width: 100%; background: var(--card-bg); color: var(--text); }
+    .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .btn-submit { padding: 10px 24px; background: var(--success); color: white; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-submit:hover { background: #0d9668; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35); }
+    @media (max-width: 900px) { .main-content { margin-left: 0; margin-top: 56px; padding: 20px; } .sidebar { width: 72px; } .sidebar a { padding: 14px 8px; text-align: center; font-size: 0; } }
+    @media (max-width: 600px) { .sidebar { width: 0; overflow: hidden; } .sidebar.open { width: 260px; } .sidebar.open a { font-size: 0.9rem; padding: 12px 24px; } .burger { display: block; } .main-content { margin-left: 0; padding: 16px; } .input-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <div class="main-content">
+    <h1 class="dash-title">Marketing <span>Cost</span></h1>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-card">
+        <h3>New Expense Entry</h3>
+        <div class="input-grid">
+          <div class="input-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="input-group">
+            <label for="salesman">Salesman</label>
+            <select id="salesman" name="salesman" required onchange="onSalesmanChange()">
+              <option value="">Select Salesman</option>
+              {% for s in salesmen %}
+              <option value="{{ s.id }}"{% if s.id|stringformat:'s' == request.GET.salesman %} selected{% endif %}>{{ s.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="expense_type">Expense Type</label>
+            <select id="expense_type" name="expense_type" required>
+              <option value="">Select Type</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Food">Food</option>
+              <option value="Mobile">Mobile</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" name="amount" min="0" step="0.01" required>
+          </div>
+        </div>
+        <button class="btn-submit" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    function toggleNav(){ document.getElementById('sidebar').classList.toggle('open'); }
+    function onSalesmanChange() {
+      var salesmanId = document.getElementById('salesman').value;
+      var url = new URL(window.location.href);
+      if (salesmanId) url.searchParams.set('salesman', salesmanId);
+      else url.searchParams.delete('salesman');
+      window.location.href = url.toString();
+    }
+  </script>
+</body>
+</html>

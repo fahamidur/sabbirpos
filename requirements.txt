@@ -1,0 +1,5 @@
+Django
+firebase-admin
+playwright
+openpyxl
+pandas

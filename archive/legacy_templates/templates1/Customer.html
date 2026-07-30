@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background: var(--light-bg);
+      color: var(--text-color);
+    }
+
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+
+    .header {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .input-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .input-group label {
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .input-group input:focus {
+      border-color: var(--secondary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    button {
+      padding: 12px 25px;
+      background-color: var(--success-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow);
+    }
+
+    button:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .table {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-top: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background-color: rgba(52, 152, 219, 0.05);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+
+      .input-container {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 500px;
+      }
+    }
+    </style>
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    <div class="main-content">
+        <div class="header">
+            <h2>Create New Customer</h2>
+        </div>
+        <form method="post" action="{% url 'customer_list' %}">
+            {% csrf_token %}
+            <div class="input-container">
+                <div class="input-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter Customer Name">
+                </div>
+                <div class="input-group">
+                    <label for="code">Code:</label>
+                    <input type="text" id="code" name="code" placeholder="Enter Customer Code">
+                </div>
+                <div class="input-group">
+                    <label for="area">Area:</label>
+                    <input type="text" id="area" name="area" placeholder="Enter Customer Area">
+                </div>
+                <div class="input-group">
+                    <label for="phone">Phone number:</label>
+                    <input type="number" id="phone" name="phone" placeholder="Enter Customer Phone">
+                </div>
+                <div class="input-group">
+                    <label for="nid">NID:</label>
+                    <input type="text" id="nid" name="nid" placeholder="Enter Customer NID">
+                </div>
+                <div class="input-group">
+                    <label for="due">Due:</label>
+                    <input type="number" id="due" name="due" placeholder="Enter Customer Due">
+                </div>
+            </div>
+            <button type="submit">Add Customer</button>
+        </form>
+
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th>Area</th>
+                        <th>Phone</th>
+                        <th>Total Buy</th>
+                        <th>Current Month Buy</th>
+                        <th>Paid</th>
+                        <th>Advanced</th>
+                        <th>Due</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customer %}
+                    <tr>
+                        <td>{{ customer.name }}</td>
+                        <td>{{ customer.code }}</td>
+                        <td>{{ customer.area }}</td>
+                        <td>{{ customer.phone }}</td>
+                        <td>{{ customer.total_buy }}</td>
+                        <td>{{ customer.current_month_buy }}</td>
+                        <td>{{ customer.Paid }}</td>
+                        <td>{{ customer.Advance }}</td>
+                        <td>{{ customer.due }}</td>
+                        <td>
+                            <form method="post" action="{% url 'delete_customer' customer.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" onclick="return confirm('Are you sure you want to delete this customer?');" style="background-color: var(--accent-color);">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

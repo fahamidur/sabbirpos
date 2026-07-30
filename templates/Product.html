@@ -1,0 +1,440 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background: var(--light-bg);
+      color: var(--text-color);
+    }
+
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+    }
+
+    /* Container for input groups in grid layout */
+    .input-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    .input-group label {
+      display: block;
+      font-weight: bold;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .input-group input[type="file"] {
+      padding: 5px;
+    }
+    table img {
+      object-fit: cover;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    /* Style for the delete button */
+    button.delete {
+      background-color: #dc3545;
+    }
+    button.delete:hover {
+      background-color: #c82333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <div class="main-content">
+    <h2>Create New Product</h2>
+    <form method="post" action="{% url 'product_list' %}">
+      {% csrf_token %}
+      <div class="input-container">
+        <div class="input-group">
+          <label for="code">Code:</label>
+          <input type="text" id="code" name="code" placeholder="Enter Product Code">
+        </div>
+        <div class="input-group">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" placeholder="Enter Product Name">
+        </div>
+        <div class="input-group">
+          <label for="size">Size:</label>
+          <input type="text" id="size" name="size" placeholder="Enter Product Size">
+        </div>
+        <div class="input-group">
+          <label for="rate">Rate:</label>
+          <input type="number" id="rate" name="rate" placeholder="Enter Product Rate">
+        </div>
+        <div class="input-group">
+          <label for="production_cost">Production Cost:</label>
+          <input type="number" id="production_cost" name="production_cost" placeholder="Enter Production Cost">
+        </div>
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label for="image">Product Image URL:</label>
+          <input type="url" id="image" name="image" placeholder="https://example.com/image.jpg">
+          <small style="color: #666; display: block; margin-top: 5px;">Enter product image URL</small>
+        </div>
+      </div>
+      <button type="submit">Add Product</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Rate</th>
+          <th>Production Cost</th>
+          <th>Total Sales</th>
+          <th>Total Stock</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            {% if product.image %}
+              <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+            {% else %}
+              <div style="width: 50px; height: 50px; background: #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">No Image</div>
+            {% endif %}
+          </td>
+          <td>{{ product.code }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.size }}</td>
+          <td>{{ product.rate }}</td>
+          <td>{{ product.production_cost }}</td>
+          <td>{{ product.total_sales }}</td>
+          <td>{{ product.total_stock }}</td>
+          <td>
+            <form method="post" action="{% url 'delete_product' product.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="delete" onclick="return confirm('Are you sure you want to delete this product?');">Delete</button>
+            </form>
+            <button type="button" class="edit"
+              data-id="{{ product.id }}"
+              data-code="{{ product.code|escapejs }}"
+              data-name="{{ product.name|escapejs }}"
+              data-size="{{ product.size|escapejs }}"
+              data-rate="{{ product.rate }}"
+              data-production_cost="{{ product.production_cost }}"
+              data-total_sales="{{ product.total_sales }}"
+              data-total_stock="{{ product.total_stock }}"
+              data-image="{% if product.image %}{{ product.image }}{% endif %}"
+              onclick="openEditModal(this)">Edit</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:8px; min-width:300px; max-width:90vw; margin:40px auto; position:relative; max-height:90vh; overflow-y:auto;">
+      <h3>Edit Product</h3>
+      <form id="editProductForm" method="post">
+        {% csrf_token %}
+        <input type="hidden" id="edit_id" name="id">
+        <div class="input-container">
+          <div class="input-group">
+            <label for="edit_code">Code:</label>
+            <input type="text" id="edit_code" name="code">
+          </div>
+          <div class="input-group">
+            <label for="edit_name">Name:</label>
+            <input type="text" id="edit_name" name="name">
+          </div>
+          <div class="input-group">
+            <label for="edit_size">Size:</label>
+            <input type="text" id="edit_size" name="size">
+          </div>
+          <div class="input-group">
+            <label for="edit_rate">Rate:</label>
+            <input type="number" id="edit_rate" name="rate">
+          </div>
+          <div class="input-group">
+            <label for="edit_production_cost">Production Cost:</label>
+            <input type="number" id="edit_production_cost" name="production_cost">
+          </div>
+          <div class="input-group">
+            <label for="edit_total_sales">Total Sales:</label>
+            <input type="number" id="edit_total_sales" name="total_sales">
+          </div>
+          <div class="input-group">
+            <label for="edit_total_stock">Total Stock:</label>
+            <input type="number" id="edit_total_stock" name="total_stock">
+          </div>
+          <div class="input-group" style="grid-column: 1 / -1;">
+            <label for="edit_image">Product Image URL:</label>
+            <div id="currentImageContainer" style="margin-bottom: 10px;">
+              <img id="currentImagePreview" src="" alt="Current Image" style="max-width: 200px; max-height: 200px; border-radius: 4px; display: none;">
+              <p id="noImageText" style="color: #999; font-size: 14px; display: none;">No image currently set</p>
+            </div>
+            <input type="url" id="edit_image" name="image" placeholder="https://example.com/image.jpg" onchange="previewEditImage(this)">
+            <small style="color: #666; display: block; margin-top: 5px;">Enter image URL (leave empty to remove image)</small>
+          </div>
+        </div>
+        <button type="submit">Save Changes</button>
+        <button type="button" onclick="closeEditModal()" style="background:#aaa; margin-left:10px;">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleNav() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+    }
+
+    function openEditModal(button) {
+      document.getElementById('edit_id').value = button.getAttribute('data-id');
+      document.getElementById('edit_code').value = button.getAttribute('data-code');
+      document.getElementById('edit_name').value = button.getAttribute('data-name');
+      document.getElementById('edit_size').value = button.getAttribute('data-size');
+      document.getElementById('edit_rate').value = button.getAttribute('data-rate');
+      document.getElementById('edit_production_cost').value = button.getAttribute('data-production_cost');
+      document.getElementById('edit_total_sales').value = button.getAttribute('data-total_sales');
+      document.getElementById('edit_total_stock').value = button.getAttribute('data-total_stock');
+      
+      // Handle image preview
+      const imageUrl = button.getAttribute('data-image');
+      const currentImagePreview = document.getElementById('currentImagePreview');
+      const noImageText = document.getElementById('noImageText');
+      const editImageInput = document.getElementById('edit_image');
+      
+      if (imageUrl) {
+        currentImagePreview.src = imageUrl;
+        currentImagePreview.style.display = 'block';
+        noImageText.style.display = 'none';
+        editImageInput.value = imageUrl;
+      } else {
+        currentImagePreview.style.display = 'none';
+        noImageText.style.display = 'block';
+        editImageInput.value = '';
+      }
+      
+      document.getElementById('editModal').style.display = 'flex';
+      document.getElementById('editProductForm').action = `/update_product/${button.getAttribute('data-id')}/`;
+    }
+    
+    function previewEditImage(input) {
+      const currentImagePreview = document.getElementById('currentImagePreview');
+      const noImageText = document.getElementById('noImageText');
+      const imageUrl = input.value.trim();
+      
+      if (imageUrl) {
+        currentImagePreview.src = imageUrl;
+        currentImagePreview.style.display = 'block';
+        noImageText.style.display = 'none';
+        // Handle image load error
+        currentImagePreview.onerror = function() {
+          currentImagePreview.style.display = 'none';
+          noImageText.textContent = 'Invalid image URL';
+          noImageText.style.display = 'block';
+        };
+        currentImagePreview.onload = function() {
+          noImageText.style.display = 'none';
+        };
+      } else {
+        currentImagePreview.style.display = 'none';
+        noImageText.textContent = 'No image currently set';
+        noImageText.style.display = 'block';
+      }
+    }
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+    // Optional: Close modal on background click
+    document.addEventListener('DOMContentLoaded', function() {
+      var editModal = document.getElementById('editModal');
+      if (editModal) {
+        editModal.addEventListener('click', function(e) {
+          if (e.target === this) closeEditModal();
+        });
+      }
+    });
+  </script>
+</body>
+</html>

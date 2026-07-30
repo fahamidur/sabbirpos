@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesman POS</title>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/salesman_pos.css' %}">
+</head>
+<body>
+    <span class="burger" onclick="toggleNav()">☰</span>
+    <div class="sidebar" id="sidebar">
+        <a href="{% url 'salesman_pos' %}">POS</a>
+        <form method="post" action="{% url 'salesman_logout' %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" style="width:100%; background:none; border:none; color:white; text-align:left; padding:10px 20px; font-size:16px; cursor:pointer;">Logout</button>
+        </form>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>Point of Sale</h1>
+            <div>Salesman: {{ salesman.name }} ({{ salesman.code }})</div>
+        </header>
+
+        <div class="pos-section">
+            <h2>New Sale</h2>
+
+            <div class="additional-info">
+                <div class="input-group">
+                    <label for="warehouse">Warehouse</label>
+                    <input type="text" id="warehouse" value="Rahmaniya Pump" readonly>
+                </div>
+                <div class="input-group">
+                    <label for="customerSelect">Customer</label>
+                    <select id="customerSelect" onchange="showCustomerInfo()">
+                        <option value="">--Select Customer--</option>
+                        {% for cust in customers %}
+                        <option 
+                            value="{{ cust.id }}" 
+                            data-due="{{ cust.due }}" 
+                            data-advance="{{ cust.Advance }}">
+                            {{ cust.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="customerInfo" style="margin-top: 10px; font-weight: bold;">
+                    <!-- Due and Advance will appear here -->
+                </div>
+            </div>
+            
+            <div class="pos-form">
+                <label for="productSelect">Product:</label>
+                <select id="productSelect">
+                    <option value="">--Select Product--</option>
+                    {% for product in products %}
+                    <option data-id="{{ product.id }}" data-price="{{ product.rate }}">
+                        {{ product.name }} - Tk{{ product.rate }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <label for="quantityInput">Qty:</label>
+                <input type="number" id="quantityInput" min="1" value="1" />
+                <button class="btn" onclick="addToCart()">Add to Cart</button>
+            </div>
+            
+            <table id="cartTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Less</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="cartTableBody">
+                    <!-- Items will be dynamically added here -->
+                </tbody>
+            </table>
+            
+            <div style="text-align: right; margin-top: 10px;">
+                <strong>Grand Total: Tk<span id="grandTotal">0</span></strong>
+            </div>
+            
+            <div class="payment-info">
+                <div>
+                    <label for="discountInput">Discount %:</label>
+                    <input type="number" id="discountInput" min="0" value="0" oninput="calculateDue()">
+                </div>
+                <div>
+                    <label for="lessInput">Less Amount:</label>
+                    <input type="number" id="lessInput" min="0" value="0" oninput="calculateDue()">
+                </div>
+                <div>
+                    <label for="paymentInput">Payment:</label>
+                    <input type="number" id="paymentInput" min="0" value="0" oninput="calculateDue()">
+                </div>
+                <div>
+                    <strong>Due: Tk<span id="dueAmount">0.00</span></strong>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn" onclick="submitSale()">Submit for Approval</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNav() {
+            var sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            } else {
+                sidebar.classList.add('open');
+            }
+        }
+
+        let cart = [];
+        const salesman = {{ salesman.id }};
+
+        function addToCart() {
+            const productSelect = document.getElementById('productSelect');
+            const quantityInput = document.getElementById('quantityInput');
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+
+            if (!selectedOption || selectedOption.value === "") {
+                alert('Please select a product.');
+                return;
+            }
+            
+            const productName = selectedOption.text;
+            const price = parseFloat(selectedOption.getAttribute('data-price'));
+            const quantity = parseInt(quantityInput.value);
+            const less = 0; // default less per product
+            const total = price * quantity - less;
+            const id = selectedOption.getAttribute('data-id');
+
+            cart.push({ product: productName, price, quantity, less, total, id });
+            renderCart();
+        }
+
+        function renderCart() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+
+            cart.forEach((item, index) => {
+                const rowTotal = item.price * item.quantity - (item.less || 0);
+                grandTotal += rowTotal;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.product}</td>
+                    <td>${item.price}</td>
+                    <td>${item.quantity}</td>
+                    <td>
+                        <input type="number" min="0" value="${item.less || 0}" style="width:60px"
+                            onchange="updateLess(${index}, this.value)">
+                    </td>
+                    <td>${rowTotal}</td>
+                    <td><button class="btn remove-btn" onclick="removeFromCart(${index})">Remove</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('grandTotal').textContent = grandTotal;
+            calculateDue();
+        }
+
+        function updateLess(index, value) {
+            cart[index].less = parseFloat(value) || 0;
+            cart[index].total = cart[index].price * cart[index].quantity - cart[index].less;
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function calculateDue() {
+            let grandTotal = 0;
+            cart.forEach(item => {
+                grandTotal += item.price * item.quantity - (item.less || 0);
+            });
+            document.getElementById('grandTotal').textContent = grandTotal;
+
+            const discountPercentage = parseFloat(document.getElementById('discountInput').value) || 0;
+            const lessAmount = parseFloat(document.getElementById('lessInput').value) || 0;
+            const discountAmount = grandTotal * discountPercentage / 100;
+            const discountedTotal = grandTotal - discountAmount - lessAmount;
+            const payment = parseFloat(document.getElementById('paymentInput').value) || 0;
+            const due = discountedTotal - payment;
+            document.getElementById('dueAmount').textContent = due.toFixed(2);
+        }
+
+        function showCustomerInfo() {
+            const select = document.getElementById('customerSelect');
+            const infoDiv = document.getElementById('customerInfo');
+            const selected = select.options[select.selectedIndex];
+            if (selected && selected.value) {
+                const due = selected.getAttribute('data-due') || 0;
+                const advance = selected.getAttribute('data-advance') || 0;
+                infoDiv.innerHTML = `Due: Tk ${parseFloat(due).toFixed(2)} &nbsp; | &nbsp; Advance: Tk ${parseFloat(advance).toFixed(2)}`;
+            } else {
+                infoDiv.innerHTML = '';
+            }
+        }
+
+        function submitSale() {
+            if (cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            const customer = document.getElementById('customerSelect').value;
+            if (!customer) {
+                alert('Please select a customer');
+                return;
+            }
+
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            const less = parseFloat(document.getElementById('lessInput').value) || 0;
+            const payment_received = parseFloat(document.getElementById('paymentInput').value) || 0;
+            let total_price = 0;
+            cart.forEach(item => {
+                total_price += item.price * item.quantity - (item.less || 0);
+            });
+            const due = parseFloat(document.getElementById('dueAmount').textContent) || 0;
+
+            const saleData = {
+                salesman: salesman,
+                customer: customer,
+                products: cart,
+                total_price: total_price,
+                discount: discount,
+                less: less,
+                payment_received: payment_received,
+                due: due
+            };
+
+            fetch('/save_pending_sale/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(saleData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Failed to submit sale');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Sale submitted for approval. Invoice: ' + data.invoice_number);
+                    cart = [];
+                    document.getElementById('customerSelect').value = '';
+                    document.getElementById('discountInput').value = '0';
+                    document.getElementById('lessInput').value = '0';
+                    document.getElementById('paymentInput').value = '0';
+                    renderCart();
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error occurred'));
+                }
+            })
+            .catch(error => {
+                alert('Error submitting sale: ' + error.message);
+            });
+        }
+
+        // CSRF token function
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html> 

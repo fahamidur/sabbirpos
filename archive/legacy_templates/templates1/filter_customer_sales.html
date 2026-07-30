@@ -1,0 +1,394 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Sales Filter</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background: var(--light-bg);
+      color: var(--text-color);
+    }
+
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: var(--success-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Additional Info Section */
+    .additional-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .additional-info .input-group {
+      flex: 1 1 200px;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: var(--text-color);
+    }
+
+    .input-group input, 
+    .input-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus, 
+    .input-group select:focus {
+      border-color: var(--secondary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    /* Button Styles */
+    .btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #218838;
+    }
+    .delete-btn {
+      background-color: #e63946;
+    }
+    /* Responsive Mobile Styles */
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+      }
+      .burger {
+        display: block;
+      }
+      .main-content {
+        margin-left: 0;
+        padding: 10px;
+      }
+      .additional-info {
+        flex-direction: column;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      header h1 {
+        margin-bottom: 10px;
+      }
+      /* Make table horizontally scrollable if needed */
+      table {
+        font-size: 14px;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <!-- Sidebar Navigation -->
+     <div class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'salesman_list' %}">Salesman</a>
+    <a href="{% url 'pos_dashboard' %}">POS</a>
+    <a href="{% url 'customer_list' %}">Customer</a>
+    <a href="{% url 'product_list' %}">Product</a>
+    <a href="{% url 'all_sales' %}">All Sales</a>
+    <a href="{% url 'stockaddjust' %}">Add Stock</a>
+    <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+    <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+    <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+    <a href="{% url 'expence_list' %}">Expense Create</a>
+    <a href="{% url 'filter_sales' %}">Salesman Report</a>
+    <a href="{% url 'filter_adai' %}">Adai Report</a>
+    <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+    <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+    <a href="{% url 'add_expence' %}">Add Expense</a>
+    <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+  </div>
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <header>
+      <h1>Customer Sales Filter</h1>
+      <div>User: Admin</div>
+    </header>
+
+    <!-- Filter Form -->
+    <form method="post" action="{% url 'filter_customer_sales' %}">
+        {% csrf_token %}
+        <div class="additional-info">
+        <div class="input-group">
+            <label for="customer">Select Customer:</label>
+            <select id="customer" name="customer" required>
+                <option value="">--Select Customer--</option>
+                {% for customer in customers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="month">Select Month:</label>
+            <select id="month" name="month" required>
+                <option value="">--Select Month--</option>
+                {% for month in months %}
+                    <option value="{{ month.number }}" {% if month.number == selected_month %}selected{% endif %}>
+                        {{ month.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="year">Select Year:</label>
+            <select id="year" name="year" required>
+                <option value="">--Select Year--</option>
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        </div>
+        <button type="submit" class="btn">Filter</button>
+    </form>
+
+    <!-- Filtered Sales Table -->
+    {% if filtered_sales %}
+    <h2>Sales Records for {{ customer_name }} ({{ selected_month }}/{{ selected_year }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Salesman</th>
+                <th>Total Price</th>
+                <th>Discount</th>
+                <th>Payment Received</th>
+                <th>Due</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sale in filtered_sales %}
+            <tr>
+                <td>{{ sale.date }}</td>
+                <td>{{ sale.salesman }}</td>
+                <td>{{ sale.total_price }}</td>
+                <td>{{ sale.discount }}</td>
+                <td>{{ sale.payment_received }}</td>
+                <td>{{ sale.due }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No sales data available for the selected filters.</p>
+    {% endif %}
+  </div>
+</body>
+</html>

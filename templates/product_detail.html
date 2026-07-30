@@ -1,0 +1,294 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - Product Details</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    {% load static %}
+<link rel="stylesheet" href="{% static 'css/pages/product_detail.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'homepage' %}"><i class="fas fa-shopping-bag me-2"></i>Ecommerce Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}#categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'homepage' %}#products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}" id="cartLink">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                            <span class="badge bg-danger" id="cartBadge" style="display: none;">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user"></i> Account</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb Section -->
+    <div class="breadcrumb-section" style="margin-top: 76px;">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{% url 'homepage' %}" style="text-decoration: none; color: var(--primary-color);">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'homepage' %}#products" style="text-decoration: none; color: var(--primary-color);">Products</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="product-image-container">
+                        {% if product.image %}
+                            <img src="{{ product.image }}" alt="{{ product.name }}" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-box\'></i>';">
+                        {% else %}
+                            <i class="fas fa-box"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="product-info">
+                        <h1>{{ product.name }}</h1>
+                        <div class="product-code">Product Code: {{ product.code }}</div>
+                        
+                        <div class="product-price">tk {{ product.rate|floatformat:2 }}</div>
+                        
+                        {% if product.total_stock > 0 %}
+                            <span class="stock-badge in-stock">
+                                <i class="fas fa-check-circle me-2"></i>In Stock ({{ product.total_stock|floatformat:0 }} available)
+                            </span>
+                        {% else %}
+                            <span class="stock-badge out-of-stock">
+                                <i class="fas fa-times-circle me-2"></i>Out of Stock
+                            </span>
+                        {% endif %}
+                        
+                        <ul class="product-details-list">
+                            <li>
+                                <strong>Size:</strong>
+                                <span>{{ product.size }}</span>
+                            </li>
+                            <li>
+                                <strong>Product Code:</strong>
+                                <span>{{ product.code }}</span>
+                            </li>
+                            <li>
+                                <strong>Price:</strong>
+                                <span>tk {{ product.rate|floatformat:2 }}</span>
+                            </li>
+                            <li>
+                                <strong>Stock Available:</strong>
+                                <span>{{ product.total_stock|floatformat:0 }} units</span>
+                            </li>
+                            <li>
+                                <strong>Total Sales:</strong>
+                                <span>{{ product.total_sales|floatformat:0 }} units</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="quantity-selector">
+                            <label class="me-3"><strong>Quantity:</strong></label>
+                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="quantity" value="1" min="1" max="{{ product.total_stock|floatformat:0 }}" onchange="validateQuantity()">
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                        
+                        <button class="btn btn-add-cart" {% if product.total_stock <= 0 %}disabled{% endif %} onclick="addToCart({{ product.id }})">
+                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                        </button>
+                        <button class="btn btn-buy-now" {% if product.total_stock <= 0 %}disabled{% endif %} onclick="buyNow({{ product.id }})">
+                            <i class="fas fa-bolt me-2"></i>Buy Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products Section -->
+    {% if related_products %}
+    <section class="related-products-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Related Products</h2>
+                <p>You might also like these products</p>
+            </div>
+            <div class="row g-4">
+                {% for related_product in related_products %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="product-card">
+                        <div class="product-card-image">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="product-card-body">
+                            <h5>{{ related_product.name }}</h5>
+                            <div class="product-code" style="font-size: 0.85rem; color: #999; margin-bottom: 10px;">Code: {{ related_product.code }}</div>
+                            <div class="product-price">tk {{ related_product.rate|floatformat:2 }}</div>
+                            <a href="{% url 'product_detail' related_product.id %}" class="btn btn-product w-100">
+                                <i class="fas fa-eye me-2"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        const maxStock = {{ product.total_stock|floatformat:0 }};
+        const productId = {{ product.id }};
+        const productName = "{{ product.name }}";
+        const productPrice = {{ product.rate }};
+        
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            let currentValue = parseInt(quantityInput.value) || 1;
+            if (currentValue < maxStock) {
+                quantityInput.value = currentValue + 1;
+            }
+        }
+        
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            let currentValue = parseInt(quantityInput.value) || 1;
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
+        
+        function validateQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            let value = parseInt(quantityInput.value) || 1;
+            if (value < 1) {
+                quantityInput.value = 1;
+            } else if (value > maxStock) {
+                quantityInput.value = maxStock;
+            }
+        }
+        
+        // Cart Management System
+        function getCart() {
+            const cart = localStorage.getItem('ecommerce_cart');
+            return cart ? JSON.parse(cart) : [];
+        }
+        
+        function saveCart(cart) {
+            localStorage.setItem('ecommerce_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+        
+        function updateCartBadge() {
+            const cart = getCart();
+            const badge = document.getElementById('cartBadge');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function addToCart(productId) {
+            const cart = getCart();
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            
+            // Check if product already in cart
+            const existingItem = cart.find(item => item.id == productId);
+            
+            if (existingItem) {
+                const newQuantity = existingItem.quantity + quantity;
+                if (newQuantity <= maxStock) {
+                    existingItem.quantity = newQuantity;
+                    saveCart(cart);
+                    showNotification('Product quantity updated in cart!', 'success');
+                } else {
+                    showNotification(`Maximum stock available: ${maxStock} units!`, 'warning');
+                }
+            } else {
+                // Add new product to cart
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: quantity
+                });
+                saveCart(cart);
+                showNotification('Product added to cart!', 'success');
+            }
+        }
+        
+        function buyNow(productId) {
+            // Clear cart and add only this product
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            const cart = [{
+                id: productId,
+                name: productName,
+                price: productPrice,
+                quantity: quantity
+            }];
+            saveCart(cart);
+            // Redirect to checkout
+            window.location.href = "{% url 'checkout' %}";
+        }
+        
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Initialize cart badge on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+        });
+    </script>
+</body>
+</html>

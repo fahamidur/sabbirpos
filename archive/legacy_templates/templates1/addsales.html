@@ -1,0 +1,549 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Sales - Factory POS Dashboard</title>
+ 
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      background-color: var(--light-bg);
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+
+    .header {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .header span {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+    }
+
+    /* Form Elements */
+    .form-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .input-group {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .input-group label {
+      font-weight: 600;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    input[type="date"],
+    select,
+    input[type="number"] {
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      transition: border-color 0.3s ease;
+    }
+    input[type="date"]:focus,
+    select:focus,
+    input[type="number"]:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 0.8rem 1.5rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .action-btn {
+      margin: 0;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table thead {
+      background-color: #f1f1f1;
+    }
+    table th,
+    table td {
+      padding: 12px 15px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  <div class="main-content">
+    <form>
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="input-group">
+          <label for="Date">Date:</label>
+          <input type="date" id="Date" name="Date">
+        </div>
+        
+        <div class="input-group">
+          <label for="customerSelect">Customer</label>
+          <select id="customerSelect">
+            <option value="">--Select Customer--</option>
+            {% for customer in customers %}
+              <option value="{{ customer.id }}">{{ customer.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="salesmanSelect">Salesman</label>
+          <select id="salesmanSelect">
+            <option value="">--Select Salesman--</option>
+            {% for salesman in salesman %}
+              <option value="{{ salesman.id }}">{{ salesman.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="paymentType">Payment Type</label>
+          <select id="paymentType">
+            <option value="">--Select Payment Type--</option>
+            <option value="1">Due</option>
+            <option value="2">Advance</option>
+          </select>
+        </div>
+    
+        <div class="input-group">
+          <label for="quantityInput">Amount:</label>
+          <input type="number" id="quantityInput" min="1" value="1">
+        </div>
+      </div>
+      <button class="btn" type="button" onclick="addToStock()">Submit</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>salesman</th>
+                <th>customer</th>
+                <th>adai</th>
+                <th>Advance</th>
+                <th>date</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for adai in adai %}
+            <tr>
+                <td>{{ adai.salesman }}</td>
+                <td>{{ adai.customer}}</td>
+                <td>{{ adai.due }}</td>
+                <td>{{ adai.advance }}</td>
+                <td>{{ adai.date}}</td>
+                <td>
+                  <button class="btn action-btn" onclick="openEditDialog('{{ adai.id }}', '{{ adai.salesman }}', '{{ adai.customer }}', '{{ adai.due }}', '{{ adai.Advance }}', '{{ adai.date }}')">Edit</button>
+                   <form method="post" action="{% url 'delete_adai' adai.id %}" style="display:inline;">
+                       {% csrf_token %}
+                       <button class="btn action-btn" onclick="deleteAdai('{{ adai.id }}')">Delete</button>
+                   </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  
+<!-- Edit Dialog -->
+<div id="editDialog" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); z-index: 1000;">
+  <h3>Edit Row</h3>
+  <form id="editForm">
+      <input type="hidden" id="editAdaiId">
+      <div class="input-group">
+          <label for="editSalesman">Salesman:</label>
+          <input type="text" id="editSalesman">
+      </div>
+      <div class="input-group">
+          <label for="editCustomer">Customer:</label>
+          <input type="text" id="editCustomer">
+      </div>
+      <div class="input-group">
+        <label for="editDue">Due:</label>
+        <input type="number" id="editDue">
+    </div>
+    <div class="input-group">
+        <label for="editAdvance">Advance:</label>
+        <input type="number" id="editAdvance">
+    </div>
+    <div class="input-group">
+        <label for="editDate">Date:</label>
+        <input type="date" id="editDate">
+    </div>
+    <button type="button" class="btn" onclick="saveEdit()">Save</button>
+    <button type="button" class="btn" onclick="closeEditDialog()">Cancel</button>
+</form>
+</div>
+<!-- Overlay -->
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;" onclick="closeEditDialog()"></div>
+
+
+  <!-- JavaScript for Sidebar Toggle -->
+  <script>
+    function toggleNav() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+    }
+    
+
+  // Initialize DOM references properly
+  let productSelect, quantityInput, csrfToken;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Cache DOM elements after page loads
+    productSelect = document.getElementById('customerSelect');
+    quantityInput = document.getElementById('quantityInput');
+    money_type=document.getElementById('paymentType');
+    salesman=document.getElementById('salesmanSelect');
+    csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+  });
+
+  function addToStock() {
+    // Validate elements exist
+    if (!productSelect || !quantityInput || !csrfToken) {
+      console.error('Required elements not found!');
+      return;
+    }
+
+    // Validate selection
+    if (!productSelect.value) {
+      alert('Please select a product');
+      return;
+    }
+    
+    const quantity = parseInt(quantityInput.value);
+    if (isNaN(quantity)) {
+      alert('Please enter a valid amount');
+      return;
+    }
+    const dateInput = document.getElementById('Date');
+    const date = dateInput ? dateInput.value : null;
+
+    if (!date) {
+        alert('Please select a date');
+        return;
+    }
+
+    // Send to backend
+    fetch('{% url "update_sales" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken.value
+      },
+      body: JSON.stringify({
+        product_id: productSelect.value,
+        quantity: quantity,  // Updated to remove .value
+        money_type:money_type.value,
+        salesmanname:salesman.value,
+        date: date  
+      })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Network response was not ok');
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success') {
+        alert(`Successfully added ${quantity}`);
+        // Optionally refresh product list
+        productSelect.value = '';
+        quantityInput.value = 1;
+      } else {
+        throw new Error(data.error || 'Unknown error occurred');
+      }
+    })
+    .catch(error => {
+      alert(`Error: ${error.message}`);
+      console.error('Error:', error);
+    });
+  }
+    function deleteAdai(adaiId) {
+      if (!confirm('Are you sure you want to delete this item?')) {
+          return;
+      }
+  
+      fetch(`/delete_adai/${adaiId}/`, {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': csrfToken.value,
+          },
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'success') {
+              alert(data.message);
+              // Remove the row from the table
+              const row = document.querySelector(`button[onclick="deleteAdai('${adaiId}')"]`).closest('tr');
+              row.remove();
+          } else {
+              alert(`Error: ${data.message}`);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the item.');
+      });
+  }
+  function openEditDialog(adaiId, salesman, customer, due, advance, date) {
+    // Populate the dialog fields with the current row values
+    document.getElementById('editAdaiId').value = adaiId;
+    document.getElementById('editSalesman').value = salesman;
+    document.getElementById('editCustomer').value = customer;
+    document.getElementById('editDue').value = due;
+    document.getElementById('editAdvance').value = advance;
+    document.getElementById('editDate').value = date;
+
+    // Show the dialog and overlay
+    document.getElementById('editDialog').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function closeEditDialog() {
+    // Hide the dialog and overlay
+    document.getElementById('editDialog').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function saveEdit() {
+    const adaiId = document.getElementById('editAdaiId').value;
+    const updatedData = {
+        salesman: document.getElementById('editSalesman').value,
+        customer: document.getElementById('editCustomer').value,
+        due: parseFloat(document.getElementById('editDue').value),
+        advance: parseFloat(document.getElementById('editAdvance').value),
+        date: document.getElementById('editDate').value,
+    };
+
+    // Send updated data to the backend
+    fetch(`/update_adai/${adaiId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken.value
+        },
+        body: JSON.stringify(updatedData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Row updated successfully!');
+
+            // Update the table row with the new values
+            const row = document.getElementById(`row-${adaiId}`);
+            row.children[0].textContent = updatedData.salesman;
+            row.children[1].textContent = updatedData.customer;
+            row.children[2].textContent = updatedData.due;
+            row.children[3].textContent = updatedData.advance;
+            row.children[4].textContent = updatedData.date;
+
+            // Close the dialog
+            closeEditDialog();
+        } else {
+            alert(`Error: ${data.error}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the row.');
+    });
+}
+</script>
+</body>
+</html>

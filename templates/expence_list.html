@@ -1,0 +1,429 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense List</title>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-bg: #f8f9fa;
+      --border-color: #e9ecef;
+      --success-color: #2ecc71;
+      --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+      background: var(--light-bg);
+      color: var(--text-color);
+    }
+
+    .sidebar {
+      background-color: var(--primary-color);
+      color: white;
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: 0.3s;
+      z-index: 100;
+      box-shadow: var(--shadow);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar Styling */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* For Firefox */
+    .sidebar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      display: block;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      font-size: 0.95rem;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 30px;
+    }
+
+    .burger {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 101;
+      background: var(--primary-color);
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .burger:hover {
+      background: var(--secondary-color);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      flex-grow: 1;
+      width: 100%;
+      transition: margin-left 0.3s;
+    }
+
+    @media (max-width: 900px) {
+      .main-content {
+        margin-left: 0;
+        margin-top: 60px;
+        padding: 20px;
+      }
+
+      .sidebar {
+        width: 70px;
+        padding-top: 10px;
+      }
+
+      .sidebar a {
+        padding: 15px 5px;
+        text-align: center;
+        font-size: 0.8rem;
+      }
+
+      .sidebar a span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .sidebar.open {
+        width: 250px;
+        padding-top: 20px;
+      }
+
+      .burger {
+        display: block;
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 15px;
+      }
+    }
+
+    /* Container for input groups in grid layout */
+    .input-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: bold;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+
+<body>
+  {% include 'nav.html' %}
+  <!-- Sidebar Navigation -->
+  <!-- <div class="sidebar" id="sidebar">
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'salesman_list' %}">Salesman</a>
+    <a href="{% url 'pos_dashboard' %}">POS</a>
+    <a href="{% url 'customer_list' %}">Customer</a>
+    <a href="{% url 'product_list' %}">Product</a>
+    <a href="{% url 'all_sales' %}">All Sales</a>
+    <a href="{% url 'stockaddjust' %}">Add Stock</a>
+    <a href="{% url 'salesaddjust' %}">Adjust Sales</a>
+    <a href="{% url 'salespayjust' %}">Salesman Payment</a>
+    <a href="{% url 'transaction_list' %}">Bank Transaction</a>
+    <a href="{% url 'expence_list' %}">Expense Create</a>
+    <a href="{% url 'filter_sales' %}">Salesman Report</a>
+    <a href="{% url 'filter_adai' %}">Adai Report</a>
+    <a href="{% url 'filter_customer_sales' %}">Customer Report</a>
+    <a href="{% url 'customer_ledger' %}">Customer Ledger</a>
+    <a href="{% url 'add_expence' %}">Add Expense</a>
+    <a href="{% url 'supplier_ledger' %}">Supplier Ledger</a>
+  </div> -->
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <h2>Supplier List</h2>
+    <form method="post" action="{% url 'expence_list' %}">
+      {% csrf_token %}
+      <div class="input-container">
+        <div class="input-group">
+          <label for="transactionDate">Date:</label>
+          <input type="date" id="transactionDate" name="transactionDate">
+        </div>
+        <div class="input-group">
+          <label for="suplier">Supplier Name:</label>
+          <input type="text" id="suplier" name="suplier" placeholder="Enter Supplier Name" required>
+        </div>
+        <div class="input-group">
+          <label for="debit">Initial Due:</label>
+          <input type="number" id="debit" name="debit" step="0.01" placeholder="0.00">
+        </div>
+        <div class="input-group">
+          <label for="credit">Initial Advance:</label>
+          <input type="number" id="credit" name="credit" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <button type="submit">Add Supplier</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Supplier Name</th>
+          <th>Advanced</th>
+          <th>Due</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for exp in expence_list %}
+        <tr id="supplier-row-{{ exp.suplier|slugify }}">
+          <td class="supplier-name">{{ exp.suplier }}</td>
+          <td class="supplier-advance">{{ exp.advance|floatformat:2 }}</td>
+          <td class="supplier-due">{{ exp.due|floatformat:2 }}</td>
+          <td>
+            <button type="button" class="btn edit-btn" data-name="{{ exp.suplier }}"
+              data-due="{{ exp.due|floatformat:2 }}" data-advance="{{ exp.advance|floatformat:2 }}"
+              style="background-color: var(--secondary-color); color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Edit</button>
+            <button type="button" class="btn delete-btn" data-name="{{ exp.suplier }}"
+              style="background-color: var(--accent-color); color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Delete</button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center;">No suppliers found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Supplier Modal -->
+  <div id="editSupplierModal"
+    style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999; align-items:center; justify-content:center;">
+    <div
+      style="background:white; padding:30px; border-radius:10px; min-width:320px; max-width:90vw; box-shadow:0 4px 16px rgba(0,0,0,0.2); position:relative;">
+      <span id="closeModal"
+        style="position:absolute; top:10px; right:15px; font-size:22px; cursor:pointer;">&times;</span>
+      <h3>Edit Supplier</h3>
+      <form id="editSupplierForm">
+        <input type="hidden" id="original-suplier-name">
+        <div class="input-group">
+          <label>Name:</label>
+          <input type="text" id="edit-name" name="name" required
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div class="input-group" style="margin-top: 10px;">
+          <label>Due:</label>
+          <input type="number" id="edit-due" name="due" step="0.01" required
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <div class="input-group" style="margin-top: 10px;">
+          <label>Advance:</label>
+          <input type="number" id="edit-advance" name="advance" step="0.01" required
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
+        <button type="submit"
+          style="margin-top: 15px; width: 100%; background-color: var(--success-color); color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer;">Save
+          Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Toggle sidebar for mobile view
+      window.toggleNav = function () {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+          sidebar.style.width = sidebar.style.width === '200px' ? '0' : '200px';
+        }
+      };
+
+      const csrfToken = '{{ csrf_token }}';
+
+      // Delete Logic
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.onclick = function () {
+          const supplierName = this.getAttribute('data-name');
+          if (confirm(`Are you sure you want to delete all records for supplier "${supplierName}"?`)) {
+            fetch('{% url "delete_supplier" %}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+              },
+              body: JSON.stringify({ name: supplierName })
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.status === 'success') {
+                  window.location.reload();
+                } else {
+                  alert('Failed to delete: ' + data.error);
+                }
+              })
+              .catch(err => alert('Error: ' + err));
+          }
+        };
+      });
+
+      // Edit Modal Logic
+      const modal = document.getElementById('editSupplierModal');
+      const closeModal = document.getElementById('closeModal');
+
+      closeModal.onclick = () => { modal.style.display = 'none'; };
+      window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.onclick = function () {
+          const name = this.getAttribute('data-name');
+          const due = this.getAttribute('data-due');
+          const advance = this.getAttribute('data-advance');
+
+          document.getElementById('original-suplier-name').value = name;
+          document.getElementById('edit-name').value = name;
+          document.getElementById('edit-due').value = due;
+          document.getElementById('edit-advance').value = advance;
+
+          modal.style.display = 'flex';
+        };
+      });
+
+      document.getElementById('editSupplierForm').onsubmit = function (e) {
+        e.preventDefault();
+        const originalName = document.getElementById('original-suplier-name').value;
+        const data = {
+          original_name: originalName,
+          name: document.getElementById('edit-name').value,
+          due: document.getElementById('edit-due').value,
+          advance: document.getElementById('edit-advance').value
+        };
+
+        fetch('{% url "update_supplier" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify(data)
+        })
+          .then(response => response.json())
+          .then(resp => {
+            if (resp.status === 'success') {
+              window.location.reload();
+            } else {
+              alert('Update failed: ' + resp.error);
+            }
+          })
+          .catch(err => { alert('Error: ' + err); });
+      };
+    });
+  </script>
+</body>
+
+</html>
