@@ -178,63 +178,36 @@ def filter_sales(request):
 
 @csrf_exempt
 def profit_report(request):
-    from main.models import Sale, MarketingCost, Product
-    from django.db.models import Sum
+    """Render one collapsible summary row per sales invoice."""
     from datetime import datetime
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    sales = Sale.objects.all().order_by('-date')
-    if start_date:
-        sales = sales.filter(date__gte=start_date)
-    if end_date:
-        sales = sales.filter(date__lte=end_date)
-    profit_rows = []
-    total_product_costing = 0
-    total_marketing_cost = 0
-    total_sales = 0
-    total_profit = 0
-    for sale in sales:
-        # Marketing cost for this invoice (total marketing cost for this invoice)
-        marketing_cost = MarketingCost.objects.filter(
-            invoice_number=sale.invoice_number
-        ).aggregate(total=Sum('amount'))['total'] or 0
-        # Add salesman commission for this sale
-        total_marketing_and_commission = marketing_cost + float(sale.comission or 0)
-        if sale.products:
-            for item in sale.products:
-                try:
-                    prod = Product.objects.get(id=item.get('id'))
-                    qty = float(item.get('quantity', 0))
-                    product_costing = prod.production_cost * qty
-                    selling_price = float(item.get('price', 0)) * qty
-                    profit = selling_price - product_costing - total_marketing_and_commission
-                    profit_rows.append({
-                        'date': sale.date,
-                        'invoice_number': sale.invoice_number or 'N/A',
-                        'customer_name': sale.customer.name if sale.customer else '',
-                        'product_name': prod.name,
-                        'product_quantity': qty,
-                        'salesman_name': sale.salesman.name if sale.salesman else '',
-                        'product_costing': f"{product_costing:.2f}",
-                        'marketing_cost': f"{total_marketing_and_commission:.2f}",
-                        'selling_price': f"{selling_price:.2f}",
-                        'profit': f"{profit:.2f}",
-                    })
-                    total_product_costing += product_costing
-                    total_marketing_cost += total_marketing_and_commission
-                    total_sales += selling_price
-                    total_profit += profit
-                except Product.DoesNotExist:
-                    continue
-    context = {
-        'profit_rows': profit_rows,
-        'start_date': start_date,
-        'end_date': end_date,
-        'total_product_costing': f"{total_product_costing:.2f}",
-        'total_marketing_cost': f"{total_marketing_cost:.2f}",
-        'total_sales': f"{total_sales:.2f}",
-        'total_profit': f"{total_profit:.2f}",
-    }
-    return render(request, 'profit_report.html', context)
 
+    from main.services.profit_report_service import build_profit_report
 
+    start_date_text = (request.GET.get("start_date") or "").strip()
+    end_date_text = (request.GET.get("end_date") or "").strip()
+    start_date = None
+    end_date = None
+    error_message = ""
+
+    try:
+        if start_date_text:
+            start_date = datetime.strptime(start_date_text, "%Y-%m-%d").date()
+        if end_date_text:
+            end_date = datetime.strptime(end_date_text, "%Y-%m-%d").date()
+        if start_date and end_date and start_date > end_date:
+            error_message = "Start date cannot be later than end date."
+    except ValueError:
+        error_message = "Please enter valid dates."
+
+    if error_message:
+        report = {"invoices": [], "totals": {}}
+    else:
+        report = build_profit_report(start_date=start_date, end_date=end_date)
+
+    return render(request, "profit_report.html", {
+        "invoices": report.get("invoices", []),
+        "totals": report.get("totals", {}),
+        "start_date": start_date_text,
+        "end_date": end_date_text,
+        "error_message": error_message,
+    })
